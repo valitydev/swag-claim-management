@@ -1,0 +1,13 @@
+type: object
+allOf:
+  - $ref: '#/definitions/PartyModification'
+  - type: object
+    required:
+      - id
+      - modification
+    properties:
+      id:
+        description: Идентификатор
+        type: string
+      modification:
+        $ref: '#/definitions/ContractorModification'

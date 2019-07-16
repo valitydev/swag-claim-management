@@ -1,0 +1,9 @@
+type: object
+required:
+  - payoutToolID
+  - modification
+properties:
+  payoutToolID:
+    type: string
+  modification:
+    $ref: '#/definitions/PayoutToolModification'

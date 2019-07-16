@@ -1,0 +1,110 @@
+swagger: '2.0'
+info:
+  version: 0.1.0
+  title: RBKmoney Claim Management API
+  description: |
+
+    RBKmoney Claim Management API служит для управления секретных вызовов.
+  termsOfService: 'http://rbk.money/'
+  contact:
+    name: RBKmoney support team
+    email: support@rbk.money
+    url: 'https://rbk.money'
+host: api.rbk.money
+basePath: /claim-management/v0
+schemes:
+  - https
+consumes:
+  - application/json; charset=utf-8
+produces:
+  - application/json; charset=utf-8
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: >
+      Для аутентификации вызовов мы используем [JWT](https://jwt.io).
+      Cоответствующий ключ передается в заголовке.
+
+      ```shell
+       Authorization: Bearer {TOKENIZATION|PRIVATE_JWT}
+      ```
+security:
+  - bearer: []
+responses:
+  NotFound:
+    description: Заданный ресурс не найден
+    schema:
+      $ref: '#/definitions/GeneralError'
+  Unauthorized:
+    description: Ошибка авторизации
+  DefaultLogicError:
+    description: Неверные данные
+    schema:
+      $ref: '#/definitions/DefaultLogicError'
+parameters:
+  requestID:
+    name: X-Request-ID
+    in: header
+    description: Уникальный идентификатор запроса к системе
+    required: true
+    type: string
+    maxLength: 32
+    minLength: 1
+  claimID:
+    name: claimID
+    in: path
+    description: Идентификатор заявки
+    required: true
+    type: integer
+    format: int64
+  claimRevision:
+    name: claimRevision
+    in: query
+    description: Версия заявки
+    required: true
+    type: integer
+    format: int32
+  limit:
+    name: limit
+    in: query
+    description: Лимит выборки
+    required: true
+    type: integer
+    format: int32
+    minimum: 1
+    maximum: 1000
+  deadline:
+    name: X-Request-Deadline
+    in: header
+    description: Максимальное время обработки запроса
+    required: false
+    type: string
+    maxLength: 40
+    minLength: 1
+  continuationToken:
+    name: continuationToken
+    in: query
+    required: false
+    description: >
+      Токен, сигнализирующий о том, что в ответе передана только часть данных.
+
+      Для получения следующей части нужно повторно обратиться к сервису, указав
+      тот-же набор условий и полученый токен.
+
+      Если токена нет, получена последняя часть данных.
+    type: string
+tags:
+  - name: Claims
+    x-displayName: Заявки
+    description: >
+      Некоторая область данных может быть изменена только после премодерации на
+      стороне платформы. Например, создание и активация новых магазинов,
+      изменение финансовых данных вашего участника и т.п. требуют ручной
+      проверки сотрудниками RBKmoney. Попытка изменить такие данные приводит к
+      автоматическому созданию заявки на изменение данных. До тех пор, пока
+      заявка не одобрена, вы можете добавлять изменения. После одобрения они
+      будут применены к набору данных. В случае отказа по заявке данные
+      останутся в неизменном состоянии. Ближайшим аналогом заявок можно
+      представить Pull Request в распределенных системах контроля версий.

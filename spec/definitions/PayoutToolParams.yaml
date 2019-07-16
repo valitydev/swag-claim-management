@@ -1,0 +1,9 @@
+type: object
+required:
+  - currency
+  - toolInfo
+properties:
+  currency:
+    $ref: '#/definitions/CurrencyRef'
+  toolInfo:
+    $ref: '#/definitions/PayoutToolInfo'

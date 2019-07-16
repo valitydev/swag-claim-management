@@ -1,0 +1,9 @@
+type: object
+required:
+  - adjustmentID
+  - modification
+properties:
+  adjustmentID:
+    type: string
+  modification:
+    $ref: '#/definitions/ContractAdjustmentModification'

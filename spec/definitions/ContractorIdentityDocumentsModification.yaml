@@ -1,0 +1,9 @@
+type: object
+required:
+  - identityDocuments
+properties:
+  identityDocuments:
+    type: array
+    items:
+      type: string
+      format: binary

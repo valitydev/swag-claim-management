@@ -1,0 +1,20 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ClaimModification'
+  - type: object
+    required:
+      - status
+      - modification
+    properties:
+      status:
+        description: Статус заявки
+        type: string
+        enum:
+          - pending
+          - review
+          - pendingAcceptance
+          - accepted
+          - denied
+          - revoked
+      modification:
+        $ref: '#/definitions/StatusModification'

@@ -1,0 +1,10 @@
+description: Единичное изменение статуса заявки
+type: object
+discriminator: statusModificationType
+required:
+  - statusModificationType
+properties:
+  statusModificationType:
+    type: string
+    enum:
+      - StatusChanged

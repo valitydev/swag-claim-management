@@ -1,0 +1,9 @@
+type: object
+required:
+  - schedule
+  - signer
+properties:
+  schedule:
+    $ref: '#/definitions/BusinessScheduleRef'
+  signer:
+    $ref: '#/definitions/Representative'

@@ -1,0 +1,12 @@
+description: Юридическое соглашение
+type: object
+required:
+  - signedAt
+  - legalAgreementID
+properties:
+  signedAt:
+    type: string
+  legalAgreementID:
+    type: string
+  validUntil:
+    type: string

@@ -1,0 +1,43 @@
+put:
+  description: Обновить заявку по её идентификатору.
+  operationId: updateClaimByID
+  tags:
+    - Claims
+  parameters:
+    - $ref: '#/parameters/requestID'
+    - $ref: '#/parameters/deadline'
+    - $ref: '#/parameters/claimID'
+    - $ref: '#/parameters/claimRevision'
+    - name: changeset
+      in: body
+      schema:
+        $ref: '#/definitions/Modification'
+  responses:
+    '201':
+      description: Заявка обновлена
+    '404':
+      $ref: '#/responses/NotFound'
+    '401':
+      $ref: '#/responses/Unauthorized'
+    '400':
+      description: Ошибка при изменении заявки
+      schema:
+        type: object
+        required:
+          - code
+          - message
+        properties:
+          code:
+            description: |
+              [Код ошибки](#tag/Error-Codes)
+            type: string
+            enum:
+              - invalidClaimStatus
+              - invalidClaimRevision
+              - invalidPartyStatus
+              - invalidRequest
+              - invalidDeadline
+          message:
+            description: Человекочитаемое описание ошибки
+            type: string
+            example: Invalid claim status

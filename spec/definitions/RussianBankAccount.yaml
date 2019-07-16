@@ -1,0 +1,16 @@
+description: Банковский счёт
+type: object
+required:
+  - account
+  - bankName
+  - bankPostAccount
+  - bankBik
+properties:
+  account:
+    type: string
+  bankName:
+    type: string
+  bankPostAccount:
+    type: string
+  bankBik:
+    type: string

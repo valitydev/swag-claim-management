@@ -1,0 +1,9 @@
+type: object
+discriminator: fileModificationType
+required:
+  - fileModificationType
+properties:
+  fileModificationType:
+    type: string
+    enum:
+      - FileCreated

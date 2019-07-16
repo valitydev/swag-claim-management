@@ -1,0 +1,10 @@
+description: Единичное изменение комментария
+type: object
+discriminator: commentModificationType
+required:
+  - commentModificationType
+properties:
+  commentModificationType:
+    type: string
+    enum:
+      - CommentCreated

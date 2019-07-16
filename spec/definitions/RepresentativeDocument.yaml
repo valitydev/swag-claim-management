@@ -1,0 +1,10 @@
+type: object
+discriminator: documentType
+required:
+  - documentType
+properties:
+  documentType:
+    type: string
+    enum:
+      - ArticlesOfAssociation
+      - LegalAgreement

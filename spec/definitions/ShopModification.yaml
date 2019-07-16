@@ -1,0 +1,18 @@
+type: object
+properties:
+  creation:
+    $ref: '#/definitions/ShopParams'
+  categoryModification:
+    $ref: '#/definitions/CategoryRef'
+  detailsModification:
+    $ref: '#/definitions/ShopDetails'
+  contractModification:
+    $ref: '#/definitions/ShopContractModification'
+  payoutToolModification:
+    type: string
+  locationModification:
+    $ref: '#/definitions/ShopLocation'
+  shopAccountCreation:
+    $ref: '#/definitions/ShopAccountParams'
+  payoutScheduleModification:
+    $ref: '#/definitions/ScheduleModification'

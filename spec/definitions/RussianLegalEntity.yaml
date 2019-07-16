@@ -1,0 +1,43 @@
+description: Юридическое лицо-резидент РФ
+type: object
+allOf:
+  - $ref: '#/definitions/LegalEntity'
+  - type: object
+    required:
+      - registeredName
+      - registeredNumber
+      - inn
+      - actualAddress
+      - postAddress
+      - epresentativePosition
+      - representativeFullName
+      - representativeDocument
+      - russianBankAccount
+    properties:
+      registeredName:
+        description: Наименование
+        type: string
+      registeredNumber:
+        description: ОГРН
+        type: string
+      inn:
+        description: ИНН/КПП
+        type: string
+      actualAddress:
+        description: Адрес места нахождения
+        type: string
+      postAddress:
+        description: Адрес для отправки корреспонденции (почтовый)
+        type: string
+      epresentativePosition:
+        description: Наименование должности ЕИО/представителя
+        type: string
+      representativeFullName:
+        description: ФИО ЕИО/представителя
+        type: string
+      representativeDocument:
+        description: Наименование документа, на основании которого действует ЕИО/представитель
+        type: string
+      russianBankAccount:
+        description: Реквизиты юр.лица
+        $ref: '#/definitions/RussianBankAccount'

@@ -1,0 +1,14 @@
+description: Невалидный набор изменений
+type: object
+required:
+  - reason
+  - invalid_changesets
+properties:
+  reason:
+    description: Причина
+    type: string
+  invalid_changesets:
+    description: Список невалидных наборов изменений
+    type: array
+    items:
+      $ref: '#/definitions/ClaimChangeset'

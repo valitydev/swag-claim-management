@@ -1,0 +1,6 @@
+type: object
+required:
+  - walletID
+properties:
+  walletID:
+    type: string

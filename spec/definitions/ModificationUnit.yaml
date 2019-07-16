@@ -1,0 +1,17 @@
+description: ModificationUnit
+type: object
+required:
+  - modificationID
+  - createdAt
+  - modification
+properties:
+  modificationID:
+    description: Идентификатор изменения
+    type: integer
+    format: int64
+  createdAt:
+    description: Дата и время создания
+    type: string
+    format: date-time
+  modification:
+    $ref: '#/definitions/Modification'

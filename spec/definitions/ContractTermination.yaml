@@ -1,0 +1,7 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    properties:
+      reason:
+        type: string

@@ -1,0 +1,14 @@
+type: object
+allOf:
+  - $ref: '#/definitions/PartyModification'
+required:
+  - id
+  - modification
+properties:
+  id:
+    description: Идентификатор магазина
+    type: string
+    maxLength: 40
+    minLength: 1
+  modification:
+    $ref: '#/definitions/ShopModification'

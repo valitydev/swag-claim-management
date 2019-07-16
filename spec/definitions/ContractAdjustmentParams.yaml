@@ -1,0 +1,6 @@
+type: object
+required:
+  - template
+properties:
+  template:
+    $ref: '#/definitions/ContractTemplateRef'

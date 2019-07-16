@@ -1,0 +1,11 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    properties:
+      contractorID:
+        type: string
+      template:
+        $ref: '#/definitions/ContractTemplateRef'
+      paymentInstitution:
+        $ref: '#/definitions/PaymentInstitutionRef'

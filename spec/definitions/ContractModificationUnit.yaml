@@ -1,0 +1,15 @@
+type: object
+allOf:
+  - $ref: '#/definitions/PartyModification'
+  - type: object
+    required:
+      - id
+      - modification
+    properties:
+      id:
+        description: Идентификатор договора
+        type: string
+        maxLength: 40
+        minLength: 1
+      modification:
+        $ref: '#/definitions/ContractModification'

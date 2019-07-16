@@ -1,0 +1,14 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ContractorModification'
+  - type: object
+    discriminator: contractorType
+    required:
+      - contractorType
+    properties:
+      contractorType:
+        type: string
+        enum:
+          - LegalEntity
+          # - RegisteredUser
+          # - PrivateEntity

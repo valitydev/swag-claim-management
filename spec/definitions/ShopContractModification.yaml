@@ -1,0 +1,9 @@
+type: object
+required:
+  - contractID
+  - payoutToolID
+properties:
+  contractID:
+    type: string
+  payoutToolID:
+    type: string

@@ -1,0 +1,15 @@
+type: object
+required:
+  - position
+  - fullName
+  - document
+properties:
+  position:
+    description: Наименование должности представителя
+    type: string
+  fullName:
+    description: ФИО представителя
+    type: string
+  document:
+    description: Документ, на основании которого действует представитель
+    $ref: '#/definitions/RepresentativeDocument'
