@@ -260,8 +260,11 @@ paths:
         - $ref: '#/parameters/claimRevision'
         - name: changeset
           in: body
+          required: true
           schema:
-            $ref: '#/definitions/Modification'
+            type: array
+            items:
+              $ref: '#/definitions/Modification'
       responses:
         '201':
           description: Заявка обновлена

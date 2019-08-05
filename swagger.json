@@ -370,8 +370,12 @@
           {
             "name": "changeset",
             "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/Modification"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Modification"
+              }
             }
           }
         ],
