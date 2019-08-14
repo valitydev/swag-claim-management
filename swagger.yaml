@@ -297,6 +297,8 @@ paths:
 definitions:
   ArticlesOfAssociation:
     type: object
+    allOf:
+      - $ref: '#/definitions/RepresentativeDocument'
   BusinessScheduleRef:
     type: object
     required:
@@ -334,12 +336,15 @@ definitions:
             maxLength: 100
   CategoryRef:
     type: object
-    required:
-      - id
-    properties:
-      id:
-        type: integer
-        format: int32
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+            format: int32
   Claim:
     description: Заявка
     type: object
@@ -467,6 +472,14 @@ definitions:
             minLength: 1
           modification:
             $ref: '#/definitions/CommentModification'
+  ContactInfo:
+    description: Информация о контакте
+    type: object
+    properties:
+      email:
+        type: string
+      phoneNumber:
+        type: string
   ContinuationToken:
     description: |
       Токен, сигнализирующий о том, что в ответе передана только часть данных.
@@ -485,11 +498,14 @@ definitions:
     required:
       - adjustmentID
       - modification
-    properties:
-      adjustmentID:
-        type: string
-      modification:
-        $ref: '#/definitions/ContractAdjustmentModification'
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          adjustmentID:
+            type: string
+          modification:
+            $ref: '#/definitions/ContractAdjustmentModification'
   ContractAdjustmentParams:
     type: object
     required:
@@ -542,27 +558,46 @@ definitions:
             type: string
             enum:
               - LegalEntity
+              - RegisteredUser
+              - PrivateEntity
   ContractorID:
-    type: string
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          ContractorID:
+            type: string
   ContractorIdentificationLevel:
-    type: integer
-    enum:
-      - value: 100
-        name: none
-      - value: 200
-        name: partial
-      - value: 300
-        name: full
+    type: object
+    allOf:
+      - $ref: '#/definitions/ContractorModification'
+      - type: object
+        discriminator: ContractorIdentificationLevel
+        required:
+          - ContractorIdentificationLevel
+        properties:
+          ContractorIdentificationLevel:
+            type: integer
+            enum:
+              - value: 100
+                name: none
+              - value: 200
+                name: partial
+              - value: 300
+                name: full
   ContractorIdentityDocumentsModification:
     type: object
     required:
       - identityDocuments
-    properties:
-      identityDocuments:
-        type: array
-        items:
-          type: string
-          format: binary
+    allOf:
+      - $ref: '#/definitions/ContractorModification'
+      - type: object
+        properties:
+          identityDocuments:
+            type: array
+            items:
+              type: string
+              format: binary
   ContractorModification:
     type: object
     discriminator: contractorModificationType
@@ -573,6 +608,8 @@ definitions:
         type: string
         enum:
           - Contractor
+          - ContractorIdentificationLevel
+          - ContractorIdentityDocumentsModification
   ContractorModificationUnit:
     type: object
     allOf:
@@ -615,6 +652,43 @@ definitions:
         properties:
           reason:
             type: string
+  CorrespondentAccount:
+    description: Корреспондентский банковский счёт
+    type: object
+    required:
+      - accountHolder
+      - iban
+      - number
+      - bank
+    properties:
+      accountHolder:
+        type: string
+      iban:
+        type: string
+      number:
+        type: string
+      bank:
+        $ref: '#/definitions/CorrespondentBankDetails'
+  CorrespondentBankDetails:
+    description: Детальная информация по корр. банковскому счёту
+    type: object
+    required:
+      - abaRtn
+      - address
+      - bic
+      - name
+      - country
+    properties:
+      abaRtn:
+        type: string
+      address:
+        type: string
+      bic:
+        type: string
+      name:
+        type: string
+      country:
+        type: string
   CurrencyRef:
     type: object
     required:
@@ -705,6 +779,76 @@ definitions:
     properties:
       message:
         type: string
+  InternationalBankAccount:
+    description: Междyнародный банковский счёт
+    type: object
+    required:
+      - accountHolder
+      - iban
+      - number
+      - bank
+    allOf:
+      - $ref: '#/definitions/PayoutToolInfo'
+      - type: object
+        properties:
+          accountHolder:
+            type: string
+          iban:
+            type: string
+          number:
+            type: string
+          bank:
+            $ref: '#/definitions/InternationalBankDetails'
+          correspondentAccount:
+            $ref: '#/definitions/CorrespondentAccount'
+  InternationalBankDetails:
+    description: Детальная информация по международному банковскому счёту
+    type: object
+    required:
+      - abaRtn
+      - address
+      - bic
+      - name
+      - country
+    properties:
+      abaRtn:
+        type: string
+      address:
+        type: string
+      bic:
+        type: string
+      name:
+        type: string
+      country:
+        type: string
+  InternationalLegalEntity:
+    description: Юридическое лицо-резидент РФ
+    type: object
+    allOf:
+      - $ref: '#/definitions/LegalEntity'
+      - type: object
+        required:
+          - legalName
+          - actualAddress
+          - registeredAddress
+          - registeredNumber
+          - tradingName
+        properties:
+          legalName:
+            description: Наименование
+            type: string
+          actualAddress:
+            description: Адрес места нахождения
+            type: string
+          registeredAddress:
+            description: Адрес места регистрации
+            type: string
+          registeredNumber:
+            description: Регистрационный номер
+            type: string
+          tradingName:
+            description: Торговое наименование
+            type: string
   InvalidChangeset:
     description: Невалидный набор изменений
     type: object
@@ -726,13 +870,16 @@ definitions:
     required:
       - signedAt
       - legalAgreementID
-    properties:
-      signedAt:
-        type: string
-      legalAgreementID:
-        type: string
-      validUntil:
-        type: string
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          signedAt:
+            type: string
+          legalAgreementID:
+            type: string
+          validUntil:
+            type: string
   LegalEntity:
     type: object
     allOf:
@@ -746,6 +893,7 @@ definitions:
             type: string
             enum:
               - RussianLegalEntity
+              - InternationalLegalEntity
   Modification:
     description: Единичное изменение данных участника
     type: object
@@ -820,6 +968,7 @@ definitions:
         type: string
         enum:
           - RussianBankAccount
+          - InternationalBankAccount
           - WalletInfo
   PayoutToolModification:
     type: object
@@ -831,11 +980,14 @@ definitions:
     required:
       - payoutToolID
       - modification
-    properties:
-      payoutToolID:
-        type: string
-      modification:
-        $ref: '#/definitions/PayoutToolModification'
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          payoutToolID:
+            type: string
+          modification:
+            $ref: '#/definitions/PayoutToolModification'
   PayoutToolParams:
     type: object
     required:
@@ -846,13 +998,67 @@ definitions:
         $ref: '#/definitions/CurrencyRef'
       toolInfo:
         $ref: '#/definitions/PayoutToolInfo'
+  PowerOfAttorney:
+    description: Юридическое соглашение
+    type: object
+    required:
+      - signedAt
+      - legalAgreementID
+    allOf:
+      - $ref: '#/definitions/RepresentativeDocument'
+      - type: object
+        properties:
+          signedAt:
+            type: string
+          legalAgreementID:
+            type: string
+          validUntil:
+            type: string
+  PrivateEntity:
+    description: Юридическое лицо-резидент РФ
+    type: object
+    allOf:
+      - $ref: '#/definitions/Contractor'
+      - type: object
+        required:
+          - firstName
+          - middleName
+          - secondName
+          - contactInfo
+        properties:
+          firstName:
+            description: Имя
+            type: string
+          middleName:
+            description: Отчество
+            type: string
+          secondName:
+            description: Фамилия
+            type: string
+          contactInfo:
+            description: Информация о контакте
+            $ref: '#/definitions/ContactInfo'
   Reason:
     type: string
+  RegisteredUser:
+    type: object
+    allOf:
+      - $ref: '#/definitions/Contractor'
+      - type: object
+        required:
+          - email
+        properties:
+          email:
+            description: Электронная почта
+            type: string
   ReportPreferences:
     type: object
-    properties:
-      serviceAcceptanceActPreferences:
-        $ref: '#/definitions/ServiceAcceptanceActPreferences'
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          serviceAcceptanceActPreferences:
+            $ref: '#/definitions/ServiceAcceptanceActPreferences'
   Representative:
     type: object
     required:
@@ -879,7 +1085,7 @@ definitions:
         type: string
         enum:
           - ArticlesOfAssociation
-          - LegalAgreement
+          - PowerOfAttorney
   RussianBankAccount:
     description: Банковский счёт
     type: object
@@ -888,15 +1094,18 @@ definitions:
       - bankName
       - bankPostAccount
       - bankBik
-    properties:
-      account:
-        type: string
-      bankName:
-        type: string
-      bankPostAccount:
-        type: string
-      bankBik:
-        type: string
+    allOf:
+      - $ref: '#/definitions/PayoutToolInfo'
+      - type: object
+        properties:
+          account:
+            type: string
+          bankName:
+            type: string
+          bankPostAccount:
+            type: string
+          bankBik:
+            type: string
   RussianLegalEntity:
     description: Юридическое лицо-резидент РФ
     type: object
@@ -943,9 +1152,12 @@ definitions:
             $ref: '#/definitions/RussianBankAccount'
   ScheduleModification:
     type: object
-    properties:
-      schedule:
-        $ref: '#/definitions/BusinessScheduleRef'
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        properties:
+          schedule:
+            $ref: '#/definitions/BusinessScheduleRef'
   ServiceAcceptanceActPreferences:
     type: object
     required:
@@ -958,78 +1170,89 @@ definitions:
         $ref: '#/definitions/Representative'
   ShopAccountParams:
     type: object
-    required:
-      - currency
-    properties:
-      currency:
-        $ref: '#/definitions/CurrencyRef'
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        required:
+          - currency
+        properties:
+          currency:
+            $ref: '#/definitions/CurrencyRef'
   ShopContractModification:
     type: object
-    required:
-      - contractID
-      - payoutToolID
-    properties:
-      contractID:
-        type: string
-      payoutToolID:
-        type: string
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        required:
+          - contractID
+          - payoutToolID
+        properties:
+          contractID:
+            type: string
+          payoutToolID:
+            type: string
   ShopDetails:
     type: object
-    required:
-      - name
-    properties:
-      name:
-        description: Название магазина
-        type: string
-        maxLength: 100
-      description:
-        description: Краткое описание
-        type: string
-        maxLength: 1000
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        required:
+          - name
+        properties:
+          name:
+            description: Название магазина
+            type: string
+            maxLength: 100
+          description:
+            description: Краткое описание
+            type: string
+            maxLength: 1000
   ShopLocation:
     description: 'Местоположение магазина, по которому можно его найти'
     type: object
-    discriminator: locationType
-    required:
-      - locationType
-    properties:
-      locationType:
-        description: Тип местоположения
-        type: string
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        discriminator: url
+        required:
+          - url
+        properties:
+          url:
+            description: Электронный адрес
+            type: string
   ShopModification:
     type: object
+    discriminator: shopModificationType
+    required:
+      - shopModificationType
     properties:
-      creation:
-        $ref: '#/definitions/ShopParams'
-      categoryModification:
-        $ref: '#/definitions/CategoryRef'
-      detailsModification:
-        $ref: '#/definitions/ShopDetails'
-      contractModification:
-        $ref: '#/definitions/ShopContractModification'
-      payoutToolModification:
+      shopModificationType:
         type: string
-      locationModification:
-        $ref: '#/definitions/ShopLocation'
-      shopAccountCreation:
-        $ref: '#/definitions/ShopAccountParams'
-      payoutScheduleModification:
-        $ref: '#/definitions/ScheduleModification'
+        enum:
+          - Creation
+          - CategoryModification
+          - DetailsModification
+          - ContractModification
+          - PayoutToolModification
+          - LocationModification
+          - ShopAccountCreation
+          - PayoutScheduleModification
   ShopModificationUnit:
     type: object
-    allOf:
-      - $ref: '#/definitions/PartyModification'
     required:
       - id
       - modification
-    properties:
-      id:
-        description: Идентификатор магазина
-        type: string
-        maxLength: 40
-        minLength: 1
-      modification:
-        $ref: '#/definitions/ShopModification'
+    allOf:
+      - $ref: '#/definitions/PartyModification'
+      - type: object
+        properties:
+          id:
+            description: Идентификатор магазина
+            type: string
+            maxLength: 40
+            minLength: 1
+          modification:
+            $ref: '#/definitions/ShopModification'
   ShopParams:
     description: Параметры магазина
     type: object
@@ -1039,17 +1262,32 @@ definitions:
       - details
       - contractID
       - payoutToolID
-    properties:
-      category:
-        $ref: '#/definitions/CategoryRef'
-      location:
-        $ref: '#/definitions/ShopLocation'
-      details:
-        $ref: '#/definitions/ShopDetails'
-      contractID:
-        type: string
-      payoutToolID:
-        type: string
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        properties:
+          category:
+            $ref: '#/definitions/CategoryRef'
+          location:
+            $ref: '#/definitions/ShopLocation'
+          details:
+            $ref: '#/definitions/ShopDetails'
+          contractID:
+            type: string
+          payoutToolID:
+            type: string
+  ShopPayoutToolModification:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ShopModification'
+      - type: object
+        discriminator: payoutToolModification
+        required:
+          - payoutToolModification
+        properties:
+          payoutToolModification:
+            description: Изменения в платежном инструменте
+            type: string
   StatusChanged:
     type: object
     allOf:
@@ -1090,6 +1328,9 @@ definitions:
     type: object
     required:
       - walletID
-    properties:
-      walletID:
-        type: string
+    allOf:
+      - $ref: '#/definitions/PayoutToolInfo'
+      - type: object
+        properties:
+          walletID:
+            type: string

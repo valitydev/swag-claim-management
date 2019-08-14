@@ -423,7 +423,12 @@
   },
   "definitions": {
     "ArticlesOfAssociation": {
-      "type": "object"
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/RepresentativeDocument"
+        }
+      ]
     },
     "BusinessScheduleRef": {
       "type": "object",
@@ -478,15 +483,23 @@
     },
     "CategoryRef": {
       "type": "object",
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         }
-      }
+      ]
     },
     "Claim": {
       "description": "Заявка",
@@ -690,6 +703,18 @@
         }
       ]
     },
+    "ContactInfo": {
+      "description": "Информация о контакте",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        }
+      }
+    },
     "ContinuationToken": {
       "description": "Токен, сигнализирующий о том, что в ответе передана только часть данных.\nДля получения следующей части нужно повторно обратиться к сервису, указав тот-же набор условий и полученый токен.\nЕсли токена нет, получена последняя часть данных.\n",
       "type": "string"
@@ -711,14 +736,22 @@
         "adjustmentID",
         "modification"
       ],
-      "properties": {
-        "adjustmentID": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
         },
-        "modification": {
-          "$ref": "#/definitions/ContractAdjustmentModification"
+        {
+          "type": "object",
+          "properties": {
+            "adjustmentID": {
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/ContractAdjustmentModification"
+            }
+          }
         }
-      }
+      ]
     },
     "ContractAdjustmentParams": {
       "type": "object",
@@ -794,7 +827,9 @@
             "contractorType": {
               "type": "string",
               "enum": [
-                "LegalEntity"
+                "LegalEntity",
+                "RegisteredUser",
+                "PrivateEntity"
               ]
             }
           }
@@ -802,22 +837,51 @@
       ]
     },
     "ContractorID": {
-      "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ContractorID": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "ContractorIdentificationLevel": {
-      "type": "integer",
-      "enum": [
+      "type": "object",
+      "allOf": [
         {
-          "value": 100,
-          "name": "none"
+          "$ref": "#/definitions/ContractorModification"
         },
         {
-          "value": 200,
-          "name": "partial"
-        },
-        {
-          "value": 300,
-          "name": "full"
+          "type": "object",
+          "discriminator": "ContractorIdentificationLevel",
+          "required": [
+            "ContractorIdentificationLevel"
+          ],
+          "properties": {
+            "ContractorIdentificationLevel": {
+              "type": "integer",
+              "enum": [
+                {
+                  "value": 100,
+                  "name": "none"
+                },
+                {
+                  "value": 200,
+                  "name": "partial"
+                },
+                {
+                  "value": 300,
+                  "name": "full"
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -826,15 +890,23 @@
       "required": [
         "identityDocuments"
       ],
-      "properties": {
-        "identityDocuments": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "binary"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "identityDocuments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
           }
         }
-      }
+      ]
     },
     "ContractorModification": {
       "type": "object",
@@ -846,7 +918,9 @@
         "contractorModificationType": {
           "type": "string",
           "enum": [
-            "Contractor"
+            "Contractor",
+            "ContractorIdentificationLevel",
+            "ContractorIdentityDocumentsModification"
           ]
         }
       }
@@ -924,6 +998,58 @@
           }
         }
       ]
+    },
+    "CorrespondentAccount": {
+      "description": "Корреспондентский банковский счёт",
+      "type": "object",
+      "required": [
+        "accountHolder",
+        "iban",
+        "number",
+        "bank"
+      ],
+      "properties": {
+        "accountHolder": {
+          "type": "string"
+        },
+        "iban": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        },
+        "bank": {
+          "$ref": "#/definitions/CorrespondentBankDetails"
+        }
+      }
+    },
+    "CorrespondentBankDetails": {
+      "description": "Детальная информация по корр. банковскому счёту",
+      "type": "object",
+      "required": [
+        "abaRtn",
+        "address",
+        "bic",
+        "name",
+        "country"
+      ],
+      "properties": {
+        "abaRtn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
     },
     "CurrencyRef": {
       "type": "object",
@@ -1066,6 +1192,110 @@
         }
       }
     },
+    "InternationalBankAccount": {
+      "description": "Междyнародный банковский счёт",
+      "type": "object",
+      "required": [
+        "accountHolder",
+        "iban",
+        "number",
+        "bank"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "accountHolder": {
+              "type": "string"
+            },
+            "iban": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            },
+            "bank": {
+              "$ref": "#/definitions/InternationalBankDetails"
+            },
+            "correspondentAccount": {
+              "$ref": "#/definitions/CorrespondentAccount"
+            }
+          }
+        }
+      ]
+    },
+    "InternationalBankDetails": {
+      "description": "Детальная информация по международному банковскому счёту",
+      "type": "object",
+      "required": [
+        "abaRtn",
+        "address",
+        "bic",
+        "name",
+        "country"
+      ],
+      "properties": {
+        "abaRtn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "InternationalLegalEntity": {
+      "description": "Юридическое лицо-резидент РФ",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/LegalEntity"
+        },
+        {
+          "type": "object",
+          "required": [
+            "legalName",
+            "actualAddress",
+            "registeredAddress",
+            "registeredNumber",
+            "tradingName"
+          ],
+          "properties": {
+            "legalName": {
+              "description": "Наименование",
+              "type": "string"
+            },
+            "actualAddress": {
+              "description": "Адрес места нахождения",
+              "type": "string"
+            },
+            "registeredAddress": {
+              "description": "Адрес места регистрации",
+              "type": "string"
+            },
+            "registeredNumber": {
+              "description": "Регистрационный номер",
+              "type": "string"
+            },
+            "tradingName": {
+              "description": "Торговое наименование",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
     "InvalidChangeset": {
       "description": "Невалидный набор изменений",
       "type": "object",
@@ -1094,17 +1324,25 @@
         "signedAt",
         "legalAgreementID"
       ],
-      "properties": {
-        "signedAt": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
         },
-        "legalAgreementID": {
-          "type": "string"
-        },
-        "validUntil": {
-          "type": "string"
+        {
+          "type": "object",
+          "properties": {
+            "signedAt": {
+              "type": "string"
+            },
+            "legalAgreementID": {
+              "type": "string"
+            },
+            "validUntil": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "LegalEntity": {
       "type": "object",
@@ -1122,7 +1360,8 @@
             "legalEntityType": {
               "type": "string",
               "enum": [
-                "RussianLegalEntity"
+                "RussianLegalEntity",
+                "InternationalLegalEntity"
               ]
             }
           }
@@ -1234,6 +1473,7 @@
           "type": "string",
           "enum": [
             "RussianBankAccount",
+            "InternationalBankAccount",
             "WalletInfo"
           ]
         }
@@ -1253,14 +1493,22 @@
         "payoutToolID",
         "modification"
       ],
-      "properties": {
-        "payoutToolID": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
         },
-        "modification": {
-          "$ref": "#/definitions/PayoutToolModification"
+        {
+          "type": "object",
+          "properties": {
+            "payoutToolID": {
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/PayoutToolModification"
+            }
+          }
         }
-      }
+      ]
     },
     "PayoutToolParams": {
       "type": "object",
@@ -1277,16 +1525,107 @@
         }
       }
     },
+    "PowerOfAttorney": {
+      "description": "Юридическое соглашение",
+      "type": "object",
+      "required": [
+        "signedAt",
+        "legalAgreementID"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/RepresentativeDocument"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "signedAt": {
+              "type": "string"
+            },
+            "legalAgreementID": {
+              "type": "string"
+            },
+            "validUntil": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "PrivateEntity": {
+      "description": "Юридическое лицо-резидент РФ",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Contractor"
+        },
+        {
+          "type": "object",
+          "required": [
+            "firstName",
+            "middleName",
+            "secondName",
+            "contactInfo"
+          ],
+          "properties": {
+            "firstName": {
+              "description": "Имя",
+              "type": "string"
+            },
+            "middleName": {
+              "description": "Отчество",
+              "type": "string"
+            },
+            "secondName": {
+              "description": "Фамилия",
+              "type": "string"
+            },
+            "contactInfo": {
+              "description": "Информация о контакте",
+              "$ref": "#/definitions/ContactInfo"
+            }
+          }
+        }
+      ]
+    },
     "Reason": {
       "type": "string"
     },
+    "RegisteredUser": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Contractor"
+        },
+        {
+          "type": "object",
+          "required": [
+            "email"
+          ],
+          "properties": {
+            "email": {
+              "description": "Электронная почта",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
     "ReportPreferences": {
       "type": "object",
-      "properties": {
-        "serviceAcceptanceActPreferences": {
-          "$ref": "#/definitions/ServiceAcceptanceActPreferences"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "serviceAcceptanceActPreferences": {
+              "$ref": "#/definitions/ServiceAcceptanceActPreferences"
+            }
+          }
         }
-      }
+      ]
     },
     "Representative": {
       "type": "object",
@@ -1321,7 +1660,7 @@
           "type": "string",
           "enum": [
             "ArticlesOfAssociation",
-            "LegalAgreement"
+            "PowerOfAttorney"
           ]
         }
       }
@@ -1335,20 +1674,28 @@
         "bankPostAccount",
         "bankBik"
       ],
-      "properties": {
-        "account": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
         },
-        "bankName": {
-          "type": "string"
-        },
-        "bankPostAccount": {
-          "type": "string"
-        },
-        "bankBik": {
-          "type": "string"
+        {
+          "type": "object",
+          "properties": {
+            "account": {
+              "type": "string"
+            },
+            "bankName": {
+              "type": "string"
+            },
+            "bankPostAccount": {
+              "type": "string"
+            },
+            "bankBik": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "RussianLegalEntity": {
       "description": "Юридическое лицо-резидент РФ",
@@ -1413,11 +1760,19 @@
     },
     "ScheduleModification": {
       "type": "object",
-      "properties": {
-        "schedule": {
-          "$ref": "#/definitions/BusinessScheduleRef"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schedule": {
+              "$ref": "#/definitions/BusinessScheduleRef"
+            }
+          }
         }
-      }
+      ]
     },
     "ServiceAcceptanceActPreferences": {
       "type": "object",
@@ -1436,113 +1791,141 @@
     },
     "ShopAccountParams": {
       "type": "object",
-      "required": [
-        "currency"
-      ],
-      "properties": {
-        "currency": {
-          "$ref": "#/definitions/CurrencyRef"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency"
+          ],
+          "properties": {
+            "currency": {
+              "$ref": "#/definitions/CurrencyRef"
+            }
+          }
         }
-      }
+      ]
     },
     "ShopContractModification": {
       "type": "object",
-      "required": [
-        "contractID",
-        "payoutToolID"
-      ],
-      "properties": {
-        "contractID": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
         },
-        "payoutToolID": {
-          "type": "string"
+        {
+          "type": "object",
+          "required": [
+            "contractID",
+            "payoutToolID"
+          ],
+          "properties": {
+            "contractID": {
+              "type": "string"
+            },
+            "payoutToolID": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "ShopDetails": {
       "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
-          "description": "Название магазина",
-          "type": "string",
-          "maxLength": 100
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
         },
-        "description": {
-          "description": "Краткое описание",
-          "type": "string",
-          "maxLength": 1000
+        {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "description": "Название магазина",
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": {
+              "description": "Краткое описание",
+              "type": "string",
+              "maxLength": 1000
+            }
+          }
         }
-      }
+      ]
     },
     "ShopLocation": {
       "description": "Местоположение магазина, по которому можно его найти",
       "type": "object",
-      "discriminator": "locationType",
-      "required": [
-        "locationType"
-      ],
-      "properties": {
-        "locationType": {
-          "description": "Тип местоположения",
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "url",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "description": "Электронный адрес",
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "ShopModification": {
       "type": "object",
+      "discriminator": "shopModificationType",
+      "required": [
+        "shopModificationType"
+      ],
       "properties": {
-        "creation": {
-          "$ref": "#/definitions/ShopParams"
-        },
-        "categoryModification": {
-          "$ref": "#/definitions/CategoryRef"
-        },
-        "detailsModification": {
-          "$ref": "#/definitions/ShopDetails"
-        },
-        "contractModification": {
-          "$ref": "#/definitions/ShopContractModification"
-        },
-        "payoutToolModification": {
-          "type": "string"
-        },
-        "locationModification": {
-          "$ref": "#/definitions/ShopLocation"
-        },
-        "shopAccountCreation": {
-          "$ref": "#/definitions/ShopAccountParams"
-        },
-        "payoutScheduleModification": {
-          "$ref": "#/definitions/ScheduleModification"
+        "shopModificationType": {
+          "type": "string",
+          "enum": [
+            "Creation",
+            "CategoryModification",
+            "DetailsModification",
+            "ContractModification",
+            "PayoutToolModification",
+            "LocationModification",
+            "ShopAccountCreation",
+            "PayoutScheduleModification"
+          ]
         }
       }
     },
     "ShopModificationUnit": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PartyModification"
-        }
-      ],
       "required": [
         "id",
         "modification"
       ],
-      "properties": {
-        "id": {
-          "description": "Идентификатор магазина",
-          "type": "string",
-          "maxLength": 40,
-          "minLength": 1
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModification"
         },
-        "modification": {
-          "$ref": "#/definitions/ShopModification"
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "Идентификатор магазина",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "modification": {
+              "$ref": "#/definitions/ShopModification"
+            }
+          }
         }
-      }
+      ]
     },
     "ShopParams": {
       "description": "Параметры магазина",
@@ -1554,23 +1937,52 @@
         "contractID",
         "payoutToolID"
       ],
-      "properties": {
-        "category": {
-          "$ref": "#/definitions/CategoryRef"
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
         },
-        "location": {
-          "$ref": "#/definitions/ShopLocation"
-        },
-        "details": {
-          "$ref": "#/definitions/ShopDetails"
-        },
-        "contractID": {
-          "type": "string"
-        },
-        "payoutToolID": {
-          "type": "string"
+        {
+          "type": "object",
+          "properties": {
+            "category": {
+              "$ref": "#/definitions/CategoryRef"
+            },
+            "location": {
+              "$ref": "#/definitions/ShopLocation"
+            },
+            "details": {
+              "$ref": "#/definitions/ShopDetails"
+            },
+            "contractID": {
+              "type": "string"
+            },
+            "payoutToolID": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
+    },
+    "ShopPayoutToolModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "payoutToolModification",
+          "required": [
+            "payoutToolModification"
+          ],
+          "properties": {
+            "payoutToolModification": {
+              "description": "Изменения в платежном инструменте",
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "StatusChanged": {
       "type": "object",
@@ -1633,11 +2045,19 @@
       "required": [
         "walletID"
       ],
-      "properties": {
-        "walletID": {
-          "type": "string"
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "walletID": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     }
   }
 }
