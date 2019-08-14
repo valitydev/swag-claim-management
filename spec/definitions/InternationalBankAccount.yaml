@@ -1,0 +1,21 @@
+description: Междyнародный банковский счёт
+type: object
+required:
+  - accountHolder
+  - iban
+  - number
+  - bank
+allOf:
+  - $ref: '#/definitions/PayoutToolInfo'
+  - type: object
+    properties:
+      accountHolder:
+        type: string
+      iban:
+        type: string
+      number:
+        type: string
+      bank:
+        $ref: '#/definitions/InternationalBankDetails'
+      correspondentAccount:
+        $ref: '#/definitions/CorrespondentAccount'

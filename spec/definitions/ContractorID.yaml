@@ -1,1 +1,6 @@
-type: string
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    properties:
+      ContractorID:
+        type: string

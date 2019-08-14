@@ -6,14 +6,17 @@ required:
   - details
   - contractID
   - payoutToolID
-properties:
-  category:
-    $ref: '#/definitions/CategoryRef'
-  location:
-    $ref: '#/definitions/ShopLocation'
-  details:
-    $ref: '#/definitions/ShopDetails'
-  contractID:
-    type: string
-  payoutToolID:
-    type: string
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    properties:
+      category:
+        $ref: '#/definitions/CategoryRef'
+      location:
+        $ref: '#/definitions/ShopLocation'
+      details:
+        $ref: '#/definitions/ShopDetails'
+      contractID:
+        type: string
+      payoutToolID:
+        type: string

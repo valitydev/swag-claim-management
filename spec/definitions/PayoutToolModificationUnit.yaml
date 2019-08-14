@@ -2,8 +2,11 @@ type: object
 required:
   - payoutToolID
   - modification
-properties:
-  payoutToolID:
-    type: string
-  modification:
-    $ref: '#/definitions/PayoutToolModification'
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    properties:
+      payoutToolID:
+        type: string
+      modification:
+        $ref: '#/definitions/PayoutToolModification'

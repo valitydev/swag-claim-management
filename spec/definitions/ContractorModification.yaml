@@ -7,5 +7,5 @@ properties:
     type: string
     enum:
       - Contractor
-      # - ContractorIdentificationLevel
-      # - ContractorIdentityDocumentsModification
+      - ContractorIdentificationLevel
+      - ContractorIdentityDocumentsModification

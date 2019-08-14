@@ -1,8 +1,17 @@
-type: integer
-enum:
-  - value: 100
-    name: none
-  - value: 200
-    name: partial
-  - value: 300
-    name: full
+type: object
+allOf:
+  - $ref: '#/definitions/ContractorModification'
+  - type: object
+    discriminator: ContractorIdentificationLevel
+    required:
+      - ContractorIdentificationLevel
+    properties:
+      ContractorIdentificationLevel:
+        type: integer
+        enum:
+          - value: 100
+            name: none
+          - value: 200
+            name: partial
+          - value: 300
+            name: full

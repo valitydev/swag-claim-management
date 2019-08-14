@@ -7,5 +7,5 @@ properties:
     type: string
     enum:
       - RussianBankAccount
-      # - InternationalBankAccount
+      - InternationalBankAccount
       - WalletInfo

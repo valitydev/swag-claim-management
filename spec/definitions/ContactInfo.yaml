@@ -1,0 +1,7 @@
+description: Информация о контакте
+type: object
+properties:
+  email:
+    type: string
+  phoneNumber:
+    type: string

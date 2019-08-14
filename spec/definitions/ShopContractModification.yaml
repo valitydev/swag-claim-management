@@ -1,9 +1,12 @@
 type: object
-required:
-  - contractID
-  - payoutToolID
-properties:
-  contractID:
-    type: string
-  payoutToolID:
-    type: string
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    required:
+      - contractID
+      - payoutToolID
+    properties:
+      contractID:
+        type: string
+      payoutToolID:
+        type: string

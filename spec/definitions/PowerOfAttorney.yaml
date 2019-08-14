@@ -4,7 +4,7 @@ required:
   - signedAt
   - legalAgreementID
 allOf:
-  - $ref: '#/definitions/ContractModification'
+  - $ref: '#/definitions/RepresentativeDocument'
   - type: object
     properties:
       signedAt:

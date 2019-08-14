@@ -1,18 +1,16 @@
 type: object
+discriminator: shopModificationType
+required:
+  - shopModificationType
 properties:
-  creation:
-    $ref: '#/definitions/ShopParams'
-  categoryModification:
-    $ref: '#/definitions/CategoryRef'
-  detailsModification:
-    $ref: '#/definitions/ShopDetails'
-  contractModification:
-    $ref: '#/definitions/ShopContractModification'
-  payoutToolModification:
+  shopModificationType:
     type: string
-  locationModification:
-    $ref: '#/definitions/ShopLocation'
-  shopAccountCreation:
-    $ref: '#/definitions/ShopAccountParams'
-  payoutScheduleModification:
-    $ref: '#/definitions/ScheduleModification'
+    enum:
+      - Creation
+      - CategoryModification
+      - DetailsModification
+      - ContractModification
+      - PayoutToolModification
+      - LocationModification
+      - ShopAccountCreation
+      - PayoutScheduleModification

@@ -10,4 +10,4 @@ allOf:
         type: string
         enum:
           - RussianLegalEntity
-          # - InternationalLegalEntity
+          - InternationalLegalEntity

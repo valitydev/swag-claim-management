@@ -1,0 +1,10 @@
+type: object
+allOf:
+  - $ref: '#/definitions/Contractor'
+  - type: object
+    required:
+      - email
+    properties:
+      email:
+        description: Электронная почта
+        type: string

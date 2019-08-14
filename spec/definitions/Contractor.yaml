@@ -10,5 +10,5 @@ allOf:
         type: string
         enum:
           - LegalEntity
-          # - RegisteredUser
-          # - PrivateEntity
+          - RegisteredUser
+          - PrivateEntity

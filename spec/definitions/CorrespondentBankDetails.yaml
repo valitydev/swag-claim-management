@@ -1,0 +1,19 @@
+description: Детальная информация по корр. банковскому счёту
+type: object
+required:
+  - abaRtn
+  - address
+  - bic
+  - name
+  - country
+properties:
+  abaRtn:
+    type: string
+  address:
+    type: string
+  bic:
+    type: string
+  name:
+    type: string
+  country:
+    type: string # цифрами или буквами будем передавать?

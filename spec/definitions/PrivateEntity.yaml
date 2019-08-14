@@ -1,0 +1,23 @@
+description: Юридическое лицо-резидент РФ
+type: object
+allOf:
+  - $ref: '#/definitions/Contractor'
+  - type: object
+    required:
+      - firstName
+      - middleName
+      - secondName
+      - contactInfo
+    properties:
+      firstName:
+        description: Имя
+        type: string
+      middleName:
+        description: Отчество
+        type: string
+      secondName:
+        description: Фамилия
+        type: string
+      contactInfo:
+        description: Информация о контакте
+        $ref: '#/definitions/ContactInfo'

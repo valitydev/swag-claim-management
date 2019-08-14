@@ -1,12 +1,15 @@
 type: object
-required:
-  - name
-properties:
-  name:
-    description: Название магазина
-    type: string
-    maxLength: 100
-  description:
-    description: Краткое описание
-    type: string
-    maxLength: 1000
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    required:
+      - name
+    properties:
+      name:
+        description: Название магазина
+        type: string
+        maxLength: 100
+      description:
+        description: Краткое описание
+        type: string
+        maxLength: 1000

@@ -1,0 +1,11 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    discriminator: payoutToolModification
+    required:
+      - payoutToolModification
+    properties:
+      payoutToolModification:
+        description: Изменения в платежном инструменте
+        type: string

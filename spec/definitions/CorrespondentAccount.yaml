@@ -1,0 +1,16 @@
+description: Корреспондентский банковский счёт
+type: object
+required:
+  - accountHolder
+  - iban
+  - number
+  - bank
+properties:
+  accountHolder:
+    type: string
+  iban:
+    type: string
+  number:
+    type: string
+  bank:
+    $ref: '#/definitions/CorrespondentBankDetails'

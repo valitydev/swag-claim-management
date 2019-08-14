@@ -1,4 +1,7 @@
 type: object
-properties:
-  schedule:
-    $ref: '#/definitions/BusinessScheduleRef'
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    properties:
+      schedule:
+        $ref: '#/definitions/BusinessScheduleRef'

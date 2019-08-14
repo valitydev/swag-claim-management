@@ -1,0 +1,27 @@
+description: Юридическое лицо-резидент РФ
+type: object
+allOf:
+  - $ref: '#/definitions/LegalEntity'
+  - type: object
+    required:
+      - legalName
+      - actualAddress
+      - registeredAddress
+      - registeredNumber
+      - tradingName
+    properties:
+      legalName:
+        description: Наименование
+        type: string
+      actualAddress:
+        description: Адрес места нахождения
+        type: string
+      registeredAddress:
+        description: Адрес места регистрации
+        type: string
+      registeredNumber:
+        description: Регистрационный номер
+        type: string
+      tradingName:
+        description: Торговое наименование
+        type: string

@@ -1,6 +1,9 @@
 type: object
 required:
   - walletID
-properties:
-  walletID:
-    type: string
+allOf:
+  - $ref: '#/definitions/PayoutToolInfo'
+  - type: object
+    properties:
+      walletID:
+        type: string

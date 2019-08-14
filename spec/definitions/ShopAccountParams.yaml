@@ -1,6 +1,9 @@
 type: object
-required:
-  - currency
-properties:
-  currency:
-    $ref: '#/definitions/CurrencyRef'
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    required:
+      - currency
+    properties:
+      currency:
+        $ref: '#/definitions/CurrencyRef'

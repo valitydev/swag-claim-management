@@ -1,9 +1,12 @@
 description: Местоположение магазина, по которому можно его найти
 type: object
-discriminator: locationType
-required:
-  - locationType
-properties:
-  locationType:
-    description: Тип местоположения
-    type: string
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    discriminator: url
+    required:
+      - url
+    properties:
+      url:
+        description: Электронный адрес
+        type: string
