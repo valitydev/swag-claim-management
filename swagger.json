@@ -1464,26 +1464,42 @@
     },
     "PayoutToolInfo": {
       "type": "object",
-      "discriminator": "payoutToolType",
-      "required": [
-        "payoutToolType"
-      ],
-      "properties": {
-        "payoutToolType": {
-          "type": "string",
-          "enum": [
-            "RussianBankAccount",
-            "InternationalBankAccount",
-            "WalletInfo"
-          ]
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "payoutToolType",
+          "required": [
+            "payoutToolType"
+          ],
+          "properties": {
+            "payoutToolType": {
+              "type": "string",
+              "enum": [
+                "RussianBankAccount",
+                "InternationalBankAccount",
+                "WalletInfo"
+              ]
+            }
+          }
         }
-      }
+      ]
     },
     "PayoutToolModification": {
       "type": "object",
+      "discriminator": "payoutToolModificationType",
+      "required": [
+        "payoutToolModificationType"
+      ],
       "properties": {
-        "creation": {
-          "$ref": "#/definitions/PayoutToolParams"
+        "payoutToolModificationType": {
+          "type": "string",
+          "enum": [
+            "Creation",
+            "InfoModification"
+          ]
         }
       }
     },
@@ -1512,18 +1528,26 @@
     },
     "PayoutToolParams": {
       "type": "object",
-      "required": [
-        "currency",
-        "toolInfo"
-      ],
-      "properties": {
-        "currency": {
-          "$ref": "#/definitions/CurrencyRef"
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolModification"
         },
-        "toolInfo": {
-          "$ref": "#/definitions/PayoutToolInfo"
+        {
+          "type": "object",
+          "required": [
+            "currency",
+            "toolInfo"
+          ],
+          "properties": {
+            "currency": {
+              "$ref": "#/definitions/CurrencyRef"
+            },
+            "toolInfo": {
+              "$ref": "#/definitions/PayoutToolInfo"
+            }
+          }
         }
-      }
+      ]
     },
     "PowerOfAttorney": {
       "description": "Юридическое соглашение",
@@ -2032,6 +2056,9 @@
                 "denied",
                 "revoked"
               ]
+            },
+            "reason": {
+              "type": "string"
             },
             "modification": {
               "$ref": "#/definitions/StatusModification"
