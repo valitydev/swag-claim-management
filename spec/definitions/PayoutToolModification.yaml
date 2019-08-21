@@ -1,4 +1,11 @@
 type: object
+discriminator: payoutToolModificationType
+required:
+  - payoutToolModificationType
 properties:
-  creation:
-    $ref: '#/definitions/PayoutToolParams'
+  payoutToolModificationType:
+    type: string
+    enum:
+      - Creation
+      - InfoModification
+

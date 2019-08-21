@@ -16,5 +16,7 @@ allOf:
           - accepted
           - denied
           - revoked
+      reason:
+        type: string
       modification:
         $ref: '#/definitions/StatusModification'
