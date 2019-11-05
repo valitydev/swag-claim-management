@@ -1,15 +1,13 @@
 type: object
-allOf:
-  - $ref: '#/definitions/ClaimModification'
-  - type: object
-    required:
-      - id
-      - modification
-    properties:
-      id:
-        description: Идентификатор документа
-        type: string
-        maxLength: 40
-        minLength: 1
-      modification:
-        $ref: '#/definitions/DocumentModification'
+required:
+  - documentId
+  - documentModification
+properties:
+  documentId:
+    description: Идентификатор документа
+    type: string
+    maxLength: 40
+    minLength: 1
+  documentModification:
+    x-rebillyMerge:
+      - $ref: '#/definitions/DocumentModification'

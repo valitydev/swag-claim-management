@@ -6,10 +6,11 @@ allOf:
     required:
       - claimModificationType
     properties:
-      claimModificationType:
-        type: string
-        enum:
-          - DocumentModificationUnit
-          - FileModificationUnit
-          - CommentModificationUnit
-          - StatusModificationUnit
+      documentModificationUnit:
+        $ref: '#/definitions/DocumentModificationUnit'
+      fileModificationUnit:
+        $ref: '#/definitions/FileModificationUnit'
+      commentModificationUnit:
+        $ref: '#/definitions/CommentModificationUnit'
+      statusModificationUnit:
+        $ref: '#/definitions/StatusModificationUnit'

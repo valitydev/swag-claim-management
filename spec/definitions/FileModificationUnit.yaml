@@ -1,15 +1,13 @@
 type: object
-allOf:
-  - $ref: '#/definitions/ClaimModification'
-  - type: object
-    required:
-      - id
-      - modification
-    properties:
-      id:
-        description: Идентификатор файла
-        type: string
-        maxLength: 40
-        minLength: 1
-      modification:
-        $ref: '#/definitions/FileModification'
+required:
+  - fileId
+  - fileModification
+properties:
+  fileId:
+    description: Идентификатор файла
+    type: string
+    maxLength: 40
+    minLength: 1
+  fileModification:
+    x-rebillyMerge:
+      - $ref: '#/definitions/FileModification'

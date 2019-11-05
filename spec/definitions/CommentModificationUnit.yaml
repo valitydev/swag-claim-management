@@ -1,15 +1,13 @@
 type: object
-allOf:
-  - $ref: '#/definitions/ClaimModification'
-  - type: object
-    required:
-      - id
-      - modification
-    properties:
-      id:
-        description: Идентификатор комментария
-        type: string
-        maxLength: 40
-        minLength: 1
-      modification:
-        $ref: '#/definitions/CommentModification'
+required:
+  - commentId
+  - commentModification
+properties:
+  commentId:
+    description: Идентификатор комментария
+    type: string
+    maxLength: 40
+    minLength: 1
+  commentModification:
+    x-rebillyMerge:
+      - $ref: '#/definitions/CommentModification'

@@ -1,3 +1,3 @@
 type: object
-allOf:
+x-rebillyMerge:
   - $ref: '#/definitions/DocumentModification'
