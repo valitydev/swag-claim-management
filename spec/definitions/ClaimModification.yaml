@@ -2,9 +2,6 @@ type: object
 allOf:
   - $ref: '#/definitions/Modification'
   - type: object
-    discriminator: claimModificationType
-    required:
-      - claimModificationType
     properties:
       documentModificationUnit:
         $ref: '#/definitions/DocumentModificationUnit'
