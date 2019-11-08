@@ -411,12 +411,20 @@ definitions:
           - claimModificationType
         properties:
           claimModificationType:
-            type: string
-            enum:
-              - DocumentModificationUnit
-              - FileModificationUnit
-              - CommentModificationUnit
-              - StatusModificationUnit
+            $ref: '#/definitions/ClaimModificationType'
+  ClaimModificationType:
+    type: object
+    discriminator: claimModificationType
+    required:
+      - claimModificationType
+    properties:
+      claimModificationType:
+        type: string
+        enum:
+          - DocumentModificationUnit
+          - FileModificationUnit
+          - CommentModificationUnit
+          - StatusModificationUnit
   ClaimPending:
     type: object
     allOf:
@@ -459,18 +467,18 @@ definitions:
   CommentModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/ClaimModification'
+      - $ref: '#/definitions/ClaimModificationType'
       - type: object
         required:
-          - id
-          - modification
+          - commentId
+          - commentModification
         properties:
-          id:
+          commentId:
             description: Идентификатор комментария
             type: string
             maxLength: 40
             minLength: 1
-          modification:
+          commentModification:
             $ref: '#/definitions/CommentModification'
   ContactInfo:
     description: Информация о контакте
@@ -532,7 +540,7 @@ definitions:
   ContractModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/PartyModification'
+      - $ref: '#/definitions/PartyModificationType'
       - type: object
         required:
           - id
@@ -555,11 +563,7 @@ definitions:
           - contractorType
         properties:
           contractorType:
-            type: string
-            enum:
-              - LegalEntity
-              - RegisteredUser
-              - PrivateEntity
+            $ref: '#/definitions/ContractorType'
   ContractorID:
     allOf:
       - $ref: '#/definitions/ContractModification'
@@ -613,7 +617,7 @@ definitions:
   ContractorModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/PartyModification'
+      - $ref: '#/definitions/PartyModificationType'
       - type: object
         required:
           - id
@@ -624,6 +628,18 @@ definitions:
             type: string
           modification:
             $ref: '#/definitions/ContractorModification'
+  ContractorType:
+    type: object
+    discriminator: contractorType
+    required:
+      - contractorType
+    properties:
+      contractorType:
+        type: string
+        enum:
+          - LegalEntity
+          - RegisteredUser
+          - PrivateEntity
   ContractParams:
     type: object
     allOf:
@@ -729,18 +745,18 @@ definitions:
   DocumentModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/ClaimModification'
+      - $ref: '#/definitions/ClaimModificationType'
       - type: object
         required:
-          - id
-          - modification
+          - documentId
+          - documentModification
         properties:
-          id:
+          documentId:
             description: Идентификатор документа
             type: string
             maxLength: 40
             minLength: 1
-          modification:
+          documentModification:
             $ref: '#/definitions/DocumentModification'
   FileCreated:
     type: object
@@ -759,18 +775,18 @@ definitions:
   FileModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/ClaimModification'
+      - $ref: '#/definitions/ClaimModificationType'
       - type: object
         required:
-          - id
-          - modification
+          - fileId
+          - fileModification
         properties:
-          id:
+          fileId:
             description: Идентификатор файла
             type: string
             maxLength: 40
             minLength: 1
-          modification:
+          fileModification:
             $ref: '#/definitions/FileModification'
   GeneralError:
     type: object
@@ -825,7 +841,7 @@ definitions:
     description: Юридическое лицо-резидент РФ
     type: object
     allOf:
-      - $ref: '#/definitions/LegalEntity'
+      - $ref: '#/definitions/LegalEntityType'
       - type: object
         required:
           - legalName
@@ -883,17 +899,25 @@ definitions:
   LegalEntity:
     type: object
     allOf:
-      - $ref: '#/definitions/Contractor'
+      - $ref: '#/definitions/ContractorType'
       - type: object
         discriminator: legalEntityType
         required:
           - legalEntityType
         properties:
           legalEntityType:
-            type: string
-            enum:
-              - RussianLegalEntity
-              - InternationalLegalEntity
+            $ref: '#/definitions/LegalEntityType'
+  LegalEntityType:
+    type: object
+    discriminator: legalEntityType
+    required:
+      - legalEntityType
+    properties:
+      legalEntityType:
+        type: string
+        enum:
+          - RussianLegalEntity
+          - InternationalLegalEntity
   Modification:
     description: Единичное изменение данных участника
     type: object
@@ -934,11 +958,19 @@ definitions:
           - partyModificationType
         properties:
           partyModificationType:
-            type: string
-            enum:
-              - ContractorModificationUnit
-              - ContractModificationUnit
-              - ShopModificationUnit
+            $ref: '#/definitions/PartyModificationType'
+  PartyModificationType:
+    type: object
+    discriminator: partyModificationType
+    required:
+      - partyModificationType
+    properties:
+      partyModificationType:
+        type: string
+        enum:
+          - ContractorModificationUnit
+          - ContractModificationUnit
+          - ShopModificationUnit
   PaymentInstitutionRef:
     type: object
     required:
@@ -1030,7 +1062,7 @@ definitions:
     description: Юридическое лицо-резидент РФ
     type: object
     allOf:
-      - $ref: '#/definitions/Contractor'
+      - $ref: '#/definitions/ContractorType'
       - type: object
         required:
           - firstName
@@ -1055,7 +1087,7 @@ definitions:
   RegisteredUser:
     type: object
     allOf:
-      - $ref: '#/definitions/Contractor'
+      - $ref: '#/definitions/ContractorType'
       - type: object
         required:
           - email
@@ -1122,7 +1154,7 @@ definitions:
     description: Юридическое лицо-резидент РФ
     type: object
     allOf:
-      - $ref: '#/definitions/LegalEntity'
+      - $ref: '#/definitions/LegalEntityType'
       - type: object
         required:
           - registeredName
@@ -1255,7 +1287,7 @@ definitions:
       - id
       - modification
     allOf:
-      - $ref: '#/definitions/PartyModification'
+      - $ref: '#/definitions/PartyModificationType'
       - type: object
         properties:
           id:
@@ -1318,11 +1350,11 @@ definitions:
   StatusModificationUnit:
     type: object
     allOf:
-      - $ref: '#/definitions/ClaimModification'
+      - $ref: '#/definitions/ClaimModificationType'
       - type: object
         required:
           - status
-          - modification
+          - statusModification
         properties:
           status:
             description: Статус заявки
@@ -1336,7 +1368,7 @@ definitions:
               - revoked
           reason:
             type: string
-          modification:
+          statusModification:
             $ref: '#/definitions/StatusModification'
   WalletInfo:
     type: object

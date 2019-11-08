@@ -596,17 +596,29 @@
           ],
           "properties": {
             "claimModificationType": {
-              "type": "string",
-              "enum": [
-                "DocumentModificationUnit",
-                "FileModificationUnit",
-                "CommentModificationUnit",
-                "StatusModificationUnit"
-              ]
+              "$ref": "#/definitions/ClaimModificationType"
             }
           }
         }
       ]
+    },
+    "ClaimModificationType": {
+      "type": "object",
+      "discriminator": "claimModificationType",
+      "required": [
+        "claimModificationType"
+      ],
+      "properties": {
+        "claimModificationType": {
+          "type": "string",
+          "enum": [
+            "DocumentModificationUnit",
+            "FileModificationUnit",
+            "CommentModificationUnit",
+            "StatusModificationUnit"
+          ]
+        }
+      }
     },
     "ClaimPending": {
       "type": "object",
@@ -681,22 +693,22 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/ClaimModification"
+          "$ref": "#/definitions/ClaimModificationType"
         },
         {
           "type": "object",
           "required": [
-            "id",
-            "modification"
+            "commentId",
+            "commentModification"
           ],
           "properties": {
-            "id": {
+            "commentId": {
               "description": "Идентификатор комментария",
               "type": "string",
               "maxLength": 40,
               "minLength": 1
             },
-            "modification": {
+            "commentModification": {
               "$ref": "#/definitions/CommentModification"
             }
           }
@@ -789,7 +801,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/PartyModification"
+          "$ref": "#/definitions/PartyModificationType"
         },
         {
           "type": "object",
@@ -825,12 +837,7 @@
           ],
           "properties": {
             "contractorType": {
-              "type": "string",
-              "enum": [
-                "LegalEntity",
-                "RegisteredUser",
-                "PrivateEntity"
-              ]
+              "$ref": "#/definitions/ContractorType"
             }
           }
         }
@@ -929,7 +936,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/PartyModification"
+          "$ref": "#/definitions/PartyModificationType"
         },
         {
           "type": "object",
@@ -948,6 +955,23 @@
           }
         }
       ]
+    },
+    "ContractorType": {
+      "type": "object",
+      "discriminator": "contractorType",
+      "required": [
+        "contractorType"
+      ],
+      "properties": {
+        "contractorType": {
+          "type": "string",
+          "enum": [
+            "LegalEntity",
+            "RegisteredUser",
+            "PrivateEntity"
+          ]
+        }
+      }
     },
     "ContractParams": {
       "type": "object",
@@ -1110,22 +1134,22 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/ClaimModification"
+          "$ref": "#/definitions/ClaimModificationType"
         },
         {
           "type": "object",
           "required": [
-            "id",
-            "modification"
+            "documentId",
+            "documentModification"
           ],
           "properties": {
-            "id": {
+            "documentId": {
               "description": "Идентификатор документа",
               "type": "string",
               "maxLength": 40,
               "minLength": 1
             },
-            "modification": {
+            "documentModification": {
               "$ref": "#/definitions/DocumentModification"
             }
           }
@@ -1159,22 +1183,22 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/ClaimModification"
+          "$ref": "#/definitions/ClaimModificationType"
         },
         {
           "type": "object",
           "required": [
-            "id",
-            "modification"
+            "fileId",
+            "fileModification"
           ],
           "properties": {
-            "id": {
+            "fileId": {
               "description": "Идентификатор файла",
               "type": "string",
               "maxLength": 40,
               "minLength": 1
             },
-            "modification": {
+            "fileModification": {
               "$ref": "#/definitions/FileModification"
             }
           }
@@ -1260,7 +1284,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/LegalEntity"
+          "$ref": "#/definitions/LegalEntityType"
         },
         {
           "type": "object",
@@ -1348,7 +1372,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/Contractor"
+          "$ref": "#/definitions/ContractorType"
         },
         {
           "type": "object",
@@ -1358,15 +1382,27 @@
           ],
           "properties": {
             "legalEntityType": {
-              "type": "string",
-              "enum": [
-                "RussianLegalEntity",
-                "InternationalLegalEntity"
-              ]
+              "$ref": "#/definitions/LegalEntityType"
             }
           }
         }
       ]
+    },
+    "LegalEntityType": {
+      "type": "object",
+      "discriminator": "legalEntityType",
+      "required": [
+        "legalEntityType"
+      ],
+      "properties": {
+        "legalEntityType": {
+          "type": "string",
+          "enum": [
+            "RussianLegalEntity",
+            "InternationalLegalEntity"
+          ]
+        }
+      }
     },
     "Modification": {
       "description": "Единичное изменение данных участника",
@@ -1423,16 +1459,28 @@
           ],
           "properties": {
             "partyModificationType": {
-              "type": "string",
-              "enum": [
-                "ContractorModificationUnit",
-                "ContractModificationUnit",
-                "ShopModificationUnit"
-              ]
+              "$ref": "#/definitions/PartyModificationType"
             }
           }
         }
       ]
+    },
+    "PartyModificationType": {
+      "type": "object",
+      "discriminator": "partyModificationType",
+      "required": [
+        "partyModificationType"
+      ],
+      "properties": {
+        "partyModificationType": {
+          "type": "string",
+          "enum": [
+            "ContractorModificationUnit",
+            "ContractModificationUnit",
+            "ShopModificationUnit"
+          ]
+        }
+      }
     },
     "PaymentInstitutionRef": {
       "type": "object",
@@ -1581,7 +1629,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/Contractor"
+          "$ref": "#/definitions/ContractorType"
         },
         {
           "type": "object",
@@ -1619,7 +1667,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/Contractor"
+          "$ref": "#/definitions/ContractorType"
         },
         {
           "type": "object",
@@ -1726,7 +1774,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/LegalEntity"
+          "$ref": "#/definitions/LegalEntityType"
         },
         {
           "type": "object",
@@ -1933,7 +1981,7 @@
       ],
       "allOf": [
         {
-          "$ref": "#/definitions/PartyModification"
+          "$ref": "#/definitions/PartyModificationType"
         },
         {
           "type": "object",
@@ -2036,13 +2084,13 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/ClaimModification"
+          "$ref": "#/definitions/ClaimModificationType"
         },
         {
           "type": "object",
           "required": [
             "status",
-            "modification"
+            "statusModification"
           ],
           "properties": {
             "status": {
@@ -2060,7 +2108,7 @@
             "reason": {
               "type": "string"
             },
-            "modification": {
+            "statusModification": {
               "$ref": "#/definitions/StatusModification"
             }
           }
