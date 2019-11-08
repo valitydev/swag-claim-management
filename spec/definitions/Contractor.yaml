@@ -7,8 +7,4 @@ allOf:
       - contractorType
     properties:
       contractorType:
-        type: string
-        enum:
-          - LegalEntity
-          - RegisteredUser
-          - PrivateEntity
+        $ref: '#/definitions/ContractorType'

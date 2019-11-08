@@ -1,6 +1,6 @@
 type: object
 allOf:
-  - $ref: '#/definitions/PartyModification'
+  - $ref: '#/definitions/PartyModificationType'
   - type: object
     required:
       - id

@@ -1,0 +1,10 @@
+type: object
+discriminator: legalEntityType
+required:
+  - legalEntityType
+properties:
+  legalEntityType:
+    type: string
+    enum:
+      - RussianLegalEntity
+      - InternationalLegalEntity

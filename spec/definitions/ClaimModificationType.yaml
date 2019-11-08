@@ -1,0 +1,12 @@
+type: object
+discriminator: claimModificationType
+required:
+  - claimModificationType
+properties:
+  claimModificationType:
+    type: string
+    enum:
+      - DocumentModificationUnit
+      - FileModificationUnit
+      - CommentModificationUnit
+      - StatusModificationUnit

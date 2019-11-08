@@ -3,7 +3,7 @@ required:
   - id
   - modification
 allOf:
-  - $ref: '#/definitions/PartyModification'
+  - $ref: '#/definitions/PartyModificationType'
   - type: object
     properties:
       id:

@@ -7,9 +7,4 @@ allOf:
       - claimModificationType
     properties:
       claimModificationType:
-        type: string
-        enum:
-          - DocumentModificationUnit
-          - FileModificationUnit
-          - CommentModificationUnit
-          - StatusModificationUnit
+        $ref: '#/definitions/ClaimModificationType'

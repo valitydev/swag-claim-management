@@ -1,15 +1,15 @@
 type: object
 allOf:
-  - $ref: '#/definitions/ClaimModification'
+  - $ref: '#/definitions/ClaimModificationType'
   - type: object
     required:
-      - id
-      - modification
+      - documentId
+      - documentModification
     properties:
-      id:
+      documentId:
         description: Идентификатор документа
         type: string
         maxLength: 40
         minLength: 1
-      modification:
+      documentModification:
         $ref: '#/definitions/DocumentModification'

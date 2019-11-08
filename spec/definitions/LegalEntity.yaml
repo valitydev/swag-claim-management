@@ -1,13 +1,10 @@
 type: object
 allOf:
-  - $ref: '#/definitions/Contractor'
+  - $ref: '#/definitions/ContractorType'
   - type: object
     discriminator: legalEntityType
     required:
       - legalEntityType
     properties:
       legalEntityType:
-        type: string
-        enum:
-          - RussianLegalEntity
-          - InternationalLegalEntity
+        $ref: '#/definitions/LegalEntityType'

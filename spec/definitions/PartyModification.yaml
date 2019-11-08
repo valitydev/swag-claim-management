@@ -7,8 +7,4 @@ allOf:
       - partyModificationType
     properties:
       partyModificationType:
-        type: string
-        enum:
-          - ContractorModificationUnit
-          - ContractModificationUnit
-          - ShopModificationUnit
+        $ref: '#/definitions/PartyModificationType'

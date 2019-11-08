@@ -1,10 +1,10 @@
 type: object
 allOf:
-  - $ref: '#/definitions/ClaimModification'
+  - $ref: '#/definitions/ClaimModificationType'
   - type: object
     required:
       - status
-      - modification
+      - statusModification
     properties:
       status:
         description: Статус заявки
@@ -18,5 +18,5 @@ allOf:
           - revoked
       reason:
         type: string
-      modification:
+      statusModification:
         $ref: '#/definitions/StatusModification'

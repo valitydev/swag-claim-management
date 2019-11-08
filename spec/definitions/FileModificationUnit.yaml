@@ -1,15 +1,15 @@
 type: object
 allOf:
-  - $ref: '#/definitions/ClaimModification'
+  - $ref: '#/definitions/ClaimModificationType'
   - type: object
     required:
-      - id
-      - modification
+      - fileId
+      - fileModification
     properties:
-      id:
+      fileId:
         description: Идентификатор файла
         type: string
         maxLength: 40
         minLength: 1
-      modification:
+      fileModification:
         $ref: '#/definitions/FileModification'

@@ -1,7 +1,7 @@
 description: Юридическое лицо-резидент РФ
 type: object
 allOf:
-  - $ref: '#/definitions/LegalEntity'
+  - $ref: '#/definitions/LegalEntityType'
   - type: object
     required:
       - registeredName

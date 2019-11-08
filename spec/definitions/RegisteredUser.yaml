@@ -1,6 +1,6 @@
 type: object
 allOf:
-  - $ref: '#/definitions/Contractor'
+  - $ref: '#/definitions/ContractorType'
   - type: object
     required:
       - email
