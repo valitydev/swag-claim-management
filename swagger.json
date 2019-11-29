@@ -278,6 +278,68 @@
         }
       }
     },
+    "/processing/claims/{claimID}/review": {
+      "put": {
+        "description": "Отправить заявку на ревью по её идентификатору.",
+        "operationId": "requestReviewClaimByID",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/claimID"
+          },
+          {
+            "$ref": "#/parameters/claimRevision"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Заявка отправлена на ревью"
+          },
+          "400": {
+            "description": "Ошибка отправки заявки на ревью",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "invalidClaimStatus",
+                    "invalidClaimRevision",
+                    "invalidPartyStatus",
+                    "invalidRequest",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid claim status"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
     "/processing/claims/{claimID}/revoke": {
       "put": {
         "description": "Отозвать заявку по её идентификатору.",
@@ -1427,6 +1489,7 @@
       "required": [
         "modificationID",
         "createdAt",
+        "userInfo",
         "modification"
       ],
       "properties": {
@@ -1439,6 +1502,9 @@
           "description": "Дата и время создания",
           "type": "string",
           "format": "date-time"
+        },
+        "userInfo": {
+          "$ref": "#/definitions/UserInfo"
         },
         "modification": {
           "$ref": "#/definitions/Modification"
@@ -2114,6 +2180,34 @@
           }
         }
       ]
+    },
+    "UserInfo": {
+      "description": "Данные пользователя",
+      "type": "object",
+      "required": [
+        "userId",
+        "email",
+        "username",
+        "userType"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "userType": {
+          "type": "string",
+          "enum": [
+            "internal_user",
+            "external_user"
+          ]
+        }
+      }
     },
     "WalletInfo": {
       "type": "object",
