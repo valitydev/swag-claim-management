@@ -1,0 +1,19 @@
+description: Данные пользователя
+type: object
+required:
+  - userId
+  - email
+  - username
+  - userType
+properties:
+  userId:
+    type: string
+  email:
+    type: string
+  username:
+    type: string
+  userType:
+    type: string
+    enum:
+      - internal_user
+      - external_user

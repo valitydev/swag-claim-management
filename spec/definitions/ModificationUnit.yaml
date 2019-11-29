@@ -3,6 +3,7 @@ type: object
 required:
   - modificationID
   - createdAt
+  - userInfo
   - modification
 properties:
   modificationID:
@@ -13,5 +14,7 @@ properties:
     description: Дата и время создания
     type: string
     format: date-time
+  userInfo:
+    $ref: '#/definitions/UserInfo'
   modification:
     $ref: '#/definitions/Modification'
