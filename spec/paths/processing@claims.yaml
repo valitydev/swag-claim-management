@@ -48,11 +48,13 @@ post:
   parameters:
     - $ref: '#/parameters/requestID'
     - $ref: '#/parameters/deadline'
-    - name: claimChangeset
+    - name: changeset
       in: body
       required: true
       schema:
-        $ref: '#/definitions/ClaimChangeset'
+        type: array
+        items:
+          $ref: '#/definitions/Modification'
   responses:
     '201':
       description: Заявка создана
