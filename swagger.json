@@ -954,29 +954,6 @@
         }
       ]
     },
-    "ContractorIdentityDocumentsModification": {
-      "type": "object",
-      "required": [
-        "identityDocuments"
-      ],
-      "allOf": [
-        {
-          "$ref": "#/definitions/ContractorModification"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "identityDocuments": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "binary"
-              }
-            }
-          }
-        }
-      ]
-    },
     "ContractorModification": {
       "type": "object",
       "discriminator": "contractorModificationType",
