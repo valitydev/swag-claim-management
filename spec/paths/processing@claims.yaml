@@ -41,7 +41,25 @@ get:
             items:
               $ref: '#/definitions/Claim'
     '400':
-      $ref: '#/responses/DefaultLogicError'
+      description: Ошибочные данные в поиске заявки участника
+      schema:
+        type: object
+        required:
+          - code
+          - message
+        properties:
+          code:
+            description: |
+              [Код ошибки](#tag/Error-Codes)
+            type: string
+            enum:
+              - limitExceeded
+              - badContinuationToken
+              - invalidDeadline
+          message:
+            description: Человекочитаемое описание ошибки
+            type: string
+            example: Invalid limit exceeded
     '401':
       $ref: '#/responses/Unauthorized'
 post:
@@ -79,10 +97,7 @@ post:
               [Код ошибки](#tag/Error-Codes)
             type: string
             enum:
-              - changesetConflict
-              - invalidPartyStatus
               - invalidChangeset
-              - invalidRequest
               - invalidDeadline
           message:
             description: Человекочитаемое описание ошибки

@@ -30,8 +30,6 @@ put:
             enum:
               - invalidClaimStatus
               - invalidClaimRevision
-              - invalidPartyStatus
-              - invalidRequest
               - invalidDeadline
           message:
             description: Человекочитаемое описание ошибки

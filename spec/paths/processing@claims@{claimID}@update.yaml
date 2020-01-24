@@ -36,9 +36,9 @@ put:
             type: string
             enum:
               - invalidClaimStatus
+              - changesetConflict
+              - invalidChangeset
               - invalidClaimRevision
-              - invalidPartyStatus
-              - invalidRequest
               - invalidDeadline
           message:
             description: Человекочитаемое описание ошибки

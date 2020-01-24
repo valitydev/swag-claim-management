@@ -18,4 +18,4 @@ get:
     '401':
       $ref: '#/responses/Unauthorized'
     '400':
-      $ref: '#/responses/DefaultLogicError'
+      $ref: '#/responses/GeneralError'

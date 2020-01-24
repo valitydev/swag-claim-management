@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>claim-management</artifactId>
+    <artifactId>swag-claim-management</artifactId>
     <version>SNAPSHOT</version>
     <packaging>jar</packaging>
 
