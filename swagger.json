@@ -50,6 +50,12 @@
       "schema": {
         "$ref": "#/definitions/DefaultLogicError"
       }
+    },
+    "GeneralError": {
+      "description": "Неверные данные",
+      "schema": {
+        "$ref": "#/definitions/GeneralError"
+      }
     }
   },
   "parameters": {
@@ -179,7 +185,30 @@
             }
           },
           "400": {
-            "$ref": "#/responses/DefaultLogicError"
+            "description": "Ошибочные данные в поиске заявки участника",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "limitExceeded",
+                    "badContinuationToken",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid limit exceeded"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
@@ -231,10 +260,7 @@
                   "description": "[Код ошибки](#tag/Error-Codes)\n",
                   "type": "string",
                   "enum": [
-                    "changesetConflict",
-                    "invalidPartyStatus",
                     "invalidChangeset",
-                    "invalidRequest",
                     "invalidDeadline"
                   ]
                 },
@@ -278,7 +304,7 @@
             }
           },
           "400": {
-            "$ref": "#/responses/DefaultLogicError"
+            "$ref": "#/responses/GeneralError"
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
@@ -329,8 +355,6 @@
                   "enum": [
                     "invalidClaimStatus",
                     "invalidClaimRevision",
-                    "invalidPartyStatus",
-                    "invalidRequest",
                     "invalidDeadline"
                   ]
                 },
@@ -398,8 +422,6 @@
                   "enum": [
                     "invalidClaimStatus",
                     "invalidClaimRevision",
-                    "invalidPartyStatus",
-                    "invalidRequest",
                     "invalidDeadline"
                   ]
                 },
@@ -470,9 +492,9 @@
                   "type": "string",
                   "enum": [
                     "invalidClaimStatus",
+                    "changesetConflict",
+                    "invalidChangeset",
                     "invalidClaimRevision",
-                    "invalidPartyStatus",
-                    "invalidRequest",
                     "invalidDeadline"
                   ]
                 },

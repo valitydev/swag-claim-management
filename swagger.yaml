@@ -41,6 +41,10 @@ responses:
     description: Неверные данные
     schema:
       $ref: '#/definitions/DefaultLogicError'
+  GeneralError:
+    description: Неверные данные
+    schema:
+      $ref: '#/definitions/GeneralError'
 parameters:
   requestID:
     name: X-Request-ID
@@ -140,7 +144,25 @@ paths:
                 items:
                   $ref: '#/definitions/Claim'
         '400':
-          $ref: '#/responses/DefaultLogicError'
+          description: Ошибочные данные в поиске заявки участника
+          schema:
+            type: object
+            required:
+              - code
+              - message
+            properties:
+              code:
+                description: |
+                  [Код ошибки](#tag/Error-Codes)
+                type: string
+                enum:
+                  - limitExceeded
+                  - badContinuationToken
+                  - invalidDeadline
+              message:
+                description: Человекочитаемое описание ошибки
+                type: string
+                example: Invalid limit exceeded
         '401':
           $ref: '#/responses/Unauthorized'
     post:
@@ -178,10 +200,7 @@ paths:
                   [Код ошибки](#tag/Error-Codes)
                 type: string
                 enum:
-                  - changesetConflict
-                  - invalidPartyStatus
                   - invalidChangeset
-                  - invalidRequest
                   - invalidDeadline
               message:
                 description: Человекочитаемое описание ошибки
@@ -206,7 +225,7 @@ paths:
           schema:
             $ref: '#/definitions/Claim'
         '400':
-          $ref: '#/responses/DefaultLogicError'
+          $ref: '#/responses/GeneralError'
         '401':
           $ref: '#/responses/Unauthorized'
         '404':
@@ -240,8 +259,6 @@ paths:
                 enum:
                   - invalidClaimStatus
                   - invalidClaimRevision
-                  - invalidPartyStatus
-                  - invalidRequest
                   - invalidDeadline
               message:
                 description: Человекочитаемое описание ошибки
@@ -284,8 +301,6 @@ paths:
                 enum:
                   - invalidClaimStatus
                   - invalidClaimRevision
-                  - invalidPartyStatus
-                  - invalidRequest
                   - invalidDeadline
               message:
                 description: Человекочитаемое описание ошибки
@@ -330,9 +345,9 @@ paths:
                 type: string
                 enum:
                   - invalidClaimStatus
+                  - changesetConflict
+                  - invalidChangeset
                   - invalidClaimRevision
-                  - invalidPartyStatus
-                  - invalidRequest
                   - invalidDeadline
               message:
                 description: Человекочитаемое описание ошибки
