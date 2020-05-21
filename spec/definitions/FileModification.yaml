@@ -7,3 +7,4 @@ properties:
     type: string
     enum:
       - FileCreated
+      - FileDeleted
