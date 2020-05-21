@@ -119,22 +119,6 @@ parameters:
     required: true
     type: integer
     format: int64
-  commentID:
-    name: commentID
-    in: path
-    description: Идентификатор комментария
-    required: true
-    type: string
-    maxLength: 40
-    minLength: 1
-  fileID:
-    name: fileID
-    in: path
-    description: Идентификатор файла
-    required: true
-    type: string
-    maxLength: 40
-    minLength: 1
   claimRevision:
     name: claimRevision
     in: query

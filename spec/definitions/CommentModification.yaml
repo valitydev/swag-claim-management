@@ -8,3 +8,4 @@ properties:
     type: string
     enum:
       - CommentCreated
+      - CommentDeleted
