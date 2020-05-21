@@ -583,6 +583,7 @@ definitions:
         type: string
         enum:
           - CommentCreated
+          - CommentDeleted
   CommentModificationUnit:
     type: object
     allOf:
@@ -878,6 +879,7 @@ definitions:
         type: string
         enum:
           - FileCreated
+          - FileDeleted
   FileModificationUnit:
     type: object
     allOf:
