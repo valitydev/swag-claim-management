@@ -768,6 +768,14 @@
         }
       ]
     },
+    "CommentDeleted": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommentModification"
+        }
+      ]
+    },
     "CommentModification": {
       "description": "Единичное изменение комментария",
       "type": "object",
@@ -1230,6 +1238,14 @@
       ]
     },
     "FileCreated": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileModification"
+        }
+      ]
+    },
+    "FileDeleted": {
       "type": "object",
       "allOf": [
         {
