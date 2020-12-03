@@ -9,7 +9,7 @@ allOf:
       - inn
       - actualAddress
       - postAddress
-      - epresentativePosition
+      - representativePosition
       - representativeFullName
       - representativeDocument
       - russianBankAccount
@@ -29,7 +29,7 @@ allOf:
       postAddress:
         description: Адрес для отправки корреспонденции (почтовый)
         type: string
-      epresentativePosition:
+      representativePosition:
         description: Наименование должности ЕИО/представителя
         type: string
       representativeFullName:
