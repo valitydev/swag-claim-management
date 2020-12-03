@@ -1878,7 +1878,7 @@
             "inn",
             "actualAddress",
             "postAddress",
-            "epresentativePosition",
+            "representativePosition",
             "representativeFullName",
             "representativeDocument",
             "russianBankAccount"
@@ -1904,7 +1904,7 @@
               "description": "Адрес для отправки корреспонденции (почтовый)",
               "type": "string"
             },
-            "epresentativePosition": {
+            "representativePosition": {
               "description": "Наименование должности ЕИО/представителя",
               "type": "string"
             },
