@@ -1376,7 +1376,6 @@ definitions:
     allOf:
       - $ref: '#/definitions/ShopModification'
       - type: object
-        discriminator: url
         required:
           - url
         properties:
