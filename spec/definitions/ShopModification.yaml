@@ -5,12 +5,3 @@ required:
 properties:
   shopModificationType:
     type: string
-    enum:
-      - Creation
-      - CategoryModification
-      - DetailsModification
-      - ContractModification
-      - PayoutToolModification
-      - LocationModification
-      - ShopAccountCreation
-      - PayoutScheduleModification
