@@ -1,0 +1,10 @@
+description: Изменение категории магазина
+type: object
+allOf:
+  - $ref: '#/definitions/ShopModification'
+  - type: object
+    required:
+      - category
+    properties:
+      category:
+        $ref: '#/definitions/CategoryRef'
