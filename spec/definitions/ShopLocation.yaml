@@ -1,11 +1,11 @@
 description: Местоположение магазина, по которому можно его найти
 type: object
-allOf:
-  - $ref: '#/definitions/ShopModification'
-  - type: object
-    required:
-      - url
-    properties:
-      url:
-        description: Электронный адрес
-        type: string
+discriminator: locationType
+required:
+  - locationType
+properties:
+  locationType:
+    description: Тип местоположения
+    type: string
+    enum:
+      - ShopLocationUrl
