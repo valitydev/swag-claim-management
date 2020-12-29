@@ -578,23 +578,16 @@
     },
     "CategoryRef": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ShopModification"
-        },
-        {
-          "type": "object",
-          "required": [
-            "id"
-          ],
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
+      "required": [
+        "categoryID"
+      ],
+      "properties": {
+        "categoryID": {
+          "description": "Идентификатор категории товаров и услуг, предлагаемых в этом магазине\n",
+          "type": "integer",
+          "format": "int32"
         }
-      ]
+      }
     },
     "Claim": {
       "description": "Заявка",
@@ -1953,6 +1946,26 @@
           "properties": {
             "currency": {
               "$ref": "#/definitions/CurrencyRef"
+            }
+          }
+        }
+      ]
+    },
+    "ShopCategoryModification": {
+      "description": "Изменение категории магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "category"
+          ],
+          "properties": {
+            "category": {
+              "$ref": "#/definitions/CategoryRef"
             }
           }
         }
