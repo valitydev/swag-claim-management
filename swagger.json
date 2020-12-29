@@ -1924,22 +1924,6 @@
         }
       ]
     },
-    "ScheduleModification": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ShopModification"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "schedule": {
-              "$ref": "#/definitions/BusinessScheduleRef"
-            }
-          }
-        }
-      ]
-    },
     "ServiceAcceptanceActPreferences": {
       "type": "object",
       "required": [
@@ -1955,7 +1939,7 @@
         }
       }
     },
-    "ShopAccountParams": {
+    "ShopAccountCreationModification": {
       "type": "object",
       "allOf": [
         {
@@ -1997,92 +1981,7 @@
         }
       ]
     },
-    "ShopDetails": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ShopModification"
-        },
-        {
-          "type": "object",
-          "required": [
-            "name"
-          ],
-          "properties": {
-            "name": {
-              "description": "Название магазина",
-              "type": "string",
-              "maxLength": 100
-            },
-            "description": {
-              "description": "Краткое описание",
-              "type": "string",
-              "maxLength": 1000
-            }
-          }
-        }
-      ]
-    },
-    "ShopLocation": {
-      "description": "Местоположение магазина, по которому можно его найти",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ShopModification"
-        },
-        {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "url": {
-              "description": "Электронный адрес",
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
-    "ShopModification": {
-      "type": "object",
-      "discriminator": "shopModificationType",
-      "required": [
-        "shopModificationType"
-      ],
-      "properties": {
-        "shopModificationType": {
-          "type": "string"
-        }
-      }
-    },
-    "ShopModificationUnit": {
-      "type": "object",
-      "required": [
-        "id",
-        "modification"
-      ],
-      "allOf": [
-        {
-          "$ref": "#/definitions/PartyModificationType"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "id": {
-              "description": "Идентификатор магазина",
-              "type": "string",
-              "maxLength": 40,
-              "minLength": 1
-            },
-            "modification": {
-              "$ref": "#/definitions/ShopModification"
-            }
-          }
-        }
-      ]
-    },
-    "ShopParams": {
+    "ShopCreationModification": {
       "description": "Параметры магазина",
       "type": "object",
       "required": [
@@ -2113,6 +2012,168 @@
             },
             "payoutToolID": {
               "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ShopDetails": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Название магазина",
+          "type": "string",
+          "maxLength": 100
+        },
+        "description": {
+          "description": "Краткое описание",
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "ShopDetailsModification": {
+      "description": "Изменение деталей магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "details"
+          ],
+          "properties": {
+            "details": {
+              "$ref": "#/definitions/ShopDetails"
+            }
+          }
+        }
+      ]
+    },
+    "ShopLocation": {
+      "description": "Местоположение магазина, по которому можно его найти",
+      "type": "object",
+      "discriminator": "locationType",
+      "required": [
+        "locationType"
+      ],
+      "properties": {
+        "locationType": {
+          "description": "Тип местоположения",
+          "type": "string",
+          "enum": [
+            "ShopLocationUrl"
+          ]
+        }
+      }
+    },
+    "ShopLocationModification": {
+      "description": "Изменение местоположения магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "location"
+          ],
+          "properties": {
+            "location": {
+              "$ref": "#/definitions/ShopLocation"
+            }
+          }
+        }
+      ]
+    },
+    "ShopLocationUrl": {
+      "description": "Местоположение в Интернете",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopLocation"
+        },
+        {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "description": "URL сайта магазина",
+              "type": "string",
+              "format": "uri",
+              "maxLength": 1000
+            }
+          }
+        }
+      ]
+    },
+    "ShopModification": {
+      "type": "object",
+      "discriminator": "shopModificationType",
+      "required": [
+        "shopModificationType"
+      ],
+      "properties": {
+        "shopModificationType": {
+          "type": "string",
+          "enum": [
+            "ShopCreationModification",
+            "ShopCategoryModification",
+            "ShopDetailsModification",
+            "ShopContractModification",
+            "ShopPayoutToolModification",
+            "ShopLocationModification",
+            "ShopAccountCreationModification",
+            "ShopPayoutScheduleModification"
+          ]
+        }
+      }
+    },
+    "ShopModificationUnit": {
+      "type": "object",
+      "required": [
+        "id",
+        "modification"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModificationType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "Идентификатор магазина",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "modification": {
+              "$ref": "#/definitions/ShopModification"
+            }
+          }
+        }
+      ]
+    },
+    "ShopPayoutScheduleModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schedule": {
+              "$ref": "#/definitions/BusinessScheduleRef"
             }
           }
         }
