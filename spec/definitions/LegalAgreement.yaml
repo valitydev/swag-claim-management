@@ -1,15 +1,9 @@
 description: Юридическое соглашение
 type: object
-required:
-  - signedAt
-  - legalAgreementID
-allOf:
-  - $ref: '#/definitions/ContractModification'
-  - type: object
-    properties:
-      signedAt:
-        type: string
-      legalAgreementID:
-        type: string
-      validUntil:
-        type: string
+properties:
+  signedAt:
+    type: string
+  legalAgreementID:
+    type: string
+  validUntil:
+    type: string
