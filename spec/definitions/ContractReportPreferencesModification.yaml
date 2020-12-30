@@ -1,0 +1,9 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    required:
+      - reportPreferences
+    properties:
+      reportPreferences:
+        $ref: '#/definitions/ReportPreferences'

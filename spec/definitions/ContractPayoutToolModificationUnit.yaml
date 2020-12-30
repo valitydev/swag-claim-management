@@ -9,4 +9,4 @@ allOf:
       payoutToolID:
         type: string
       modification:
-        $ref: '#/definitions/PayoutToolModification'
+        $ref: '#/definitions/ContractPayoutToolModification'

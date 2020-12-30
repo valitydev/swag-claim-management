@@ -1,0 +1,10 @@
+description: Юридическое соглашение
+type: object
+allOf:
+  - $ref: '#/definitions/ContractModification'
+  - type: object
+    required:
+      - legalAgreement
+    properties:
+      legalAgreement:
+        $ref: '#/definitions/LegalAgreement'

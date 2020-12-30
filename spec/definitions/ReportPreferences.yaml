@@ -1,7 +1,4 @@
 type: object
-allOf:
-  - $ref: '#/definitions/ContractModification'
-  - type: object
-    properties:
-      serviceAcceptanceActPreferences:
-        $ref: '#/definitions/ServiceAcceptanceActPreferences'
+properties:
+  serviceAcceptanceActPreferences:
+    $ref: '#/definitions/ServiceAcceptanceActPreferences'

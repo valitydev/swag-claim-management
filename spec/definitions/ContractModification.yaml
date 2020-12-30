@@ -6,10 +6,10 @@ properties:
   contractModificationType:
     type: string
     enum:
-      - ContractParams
-      - ContractTermination
+      - ContractCreationModification
+      - ContractTerminationModification
       - ContractAdjustmentModificationUnit
       - PayoutToolModificationUnit
-      - LegalAgreement
-      - ReportPreferences
-      - ContractorID
+      - ContractLegalAgreementBindingModification
+      - ContractReportPreferencesModification
+      - ContractContractorModification

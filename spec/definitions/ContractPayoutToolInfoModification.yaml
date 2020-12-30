@@ -1,0 +1,9 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ContractPayoutToolModification'
+  - type: object
+    required:
+      - payoutToolInfo
+    properties:
+      payoutToolInfo:
+        $ref: '#/definitions/CurrencyRef'
