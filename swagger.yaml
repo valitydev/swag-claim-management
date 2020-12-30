@@ -644,6 +644,38 @@ definitions:
     properties:
       template:
         $ref: '#/definitions/ContractTemplateRef'
+  ContractContractorModification:
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        required:
+          - contractorID
+        properties:
+          contractorID:
+            type: string
+  ContractCreationModification:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        properties:
+          contractorID:
+            type: string
+          template:
+            $ref: '#/definitions/ContractTemplateRef'
+          paymentInstitution:
+            $ref: '#/definitions/PaymentInstitutionRef'
+  ContractLegalAgreementBindingModification:
+    description: Юридическое соглашение
+    type: object
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        required:
+          - legalAgreement
+        properties:
+          legalAgreement:
+            $ref: '#/definitions/LegalAgreement'
   ContractModification:
     type: object
     discriminator: contractModificationType
@@ -653,13 +685,13 @@ definitions:
       contractModificationType:
         type: string
         enum:
-          - ContractParams
-          - ContractTermination
+          - ContractCreationModification
+          - ContractTerminationModification
           - ContractAdjustmentModificationUnit
           - PayoutToolModificationUnit
-          - LegalAgreement
-          - ReportPreferences
-          - ContractorID
+          - ContractLegalAgreementBindingModification
+          - ContractReportPreferencesModification
+          - ContractContractorModification
   ContractModificationUnit:
     type: object
     allOf:
@@ -687,13 +719,6 @@ definitions:
         properties:
           contractorType:
             $ref: '#/definitions/ContractorType'
-  ContractorID:
-    allOf:
-      - $ref: '#/definitions/ContractModification'
-      - type: object
-        properties:
-          ContractorID:
-            type: string
   ContractorIdentificationLevel:
     type: object
     allOf:
@@ -750,18 +775,63 @@ definitions:
           - LegalEntity
           - RegisteredUser
           - PrivateEntity
-  ContractParams:
+  ContractPayoutToolCreationModification:
     type: object
+    allOf:
+      - $ref: '#/definitions/ContractPayoutToolModification'
+      - type: object
+        required:
+          - currency
+          - toolInfo
+        properties:
+          currency:
+            $ref: '#/definitions/CurrencyRef'
+          toolInfo:
+            $ref: '#/definitions/PayoutToolInfo'
+  ContractPayoutToolInfoModification:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ContractPayoutToolModification'
+      - type: object
+        required:
+          - payoutToolInfo
+        properties:
+          payoutToolInfo:
+            $ref: '#/definitions/CurrencyRef'
+  ContractPayoutToolModification:
+    type: object
+    discriminator: payoutToolModificationType
+    required:
+      - payoutToolModificationType
+    properties:
+      payoutToolModificationType:
+        type: string
+        enum:
+          - ContractPayoutToolCreationModification
+          - ContractPayoutToolInfoModification
+  ContractPayoutToolModificationUnit:
+    type: object
+    required:
+      - payoutToolID
+      - modification
     allOf:
       - $ref: '#/definitions/ContractModification'
       - type: object
         properties:
-          contractorID:
+          payoutToolID:
             type: string
-          template:
-            $ref: '#/definitions/ContractTemplateRef'
-          paymentInstitution:
-            $ref: '#/definitions/PaymentInstitutionRef'
+          modification:
+            $ref: '#/definitions/ContractPayoutToolModification'
+  ContractReportPreferencesModification:
+    type: object
+    allOf:
+      - $ref: '#/definitions/ContractModification'
+      - type: object
+        required:
+          - reportPreferences
+        properties:
+          reportPreferences:
+            $ref: '#/definitions/ReportPreferences'
   ContractTemplateRef:
     type: object
     required:
@@ -770,7 +840,7 @@ definitions:
       id:
         type: integer
         format: int32
-  ContractTermination:
+  ContractTerminationModification:
     type: object
     allOf:
       - $ref: '#/definitions/ContractModification'
@@ -998,19 +1068,13 @@ definitions:
   LegalAgreement:
     description: Юридическое соглашение
     type: object
-    required:
-      - signedAt
-      - legalAgreementID
-    allOf:
-      - $ref: '#/definitions/ContractModification'
-      - type: object
-        properties:
-          signedAt:
-            type: string
-          legalAgreementID:
-            type: string
-          validUntil:
-            type: string
+    properties:
+      signedAt:
+        type: string
+      legalAgreementID:
+        type: string
+      validUntil:
+        type: string
   LegalEntity:
     type: object
     allOf:
@@ -1110,56 +1174,16 @@ definitions:
       - paymentToolType
   PayoutToolInfo:
     type: object
-    allOf:
-      - $ref: '#/definitions/PayoutToolModification'
-      - type: object
-        discriminator: payoutToolType
-        required:
-          - payoutToolType
-        properties:
-          payoutToolType:
-            type: string
-            enum:
-              - RussianBankAccount
-              - InternationalBankAccount
-              - WalletInfo
-  PayoutToolModification:
-    type: object
-    discriminator: payoutToolModificationType
+    discriminator: payoutToolType
     required:
-      - payoutToolModificationType
+      - payoutToolType
     properties:
-      payoutToolModificationType:
+      payoutToolType:
         type: string
         enum:
-          - Creation
-          - InfoModification
-  PayoutToolModificationUnit:
-    type: object
-    required:
-      - payoutToolID
-      - modification
-    allOf:
-      - $ref: '#/definitions/ContractModification'
-      - type: object
-        properties:
-          payoutToolID:
-            type: string
-          modification:
-            $ref: '#/definitions/PayoutToolModification'
-  PayoutToolParams:
-    type: object
-    allOf:
-      - $ref: '#/definitions/PayoutToolModification'
-      - type: object
-        required:
-          - currency
-          - toolInfo
-        properties:
-          currency:
-            $ref: '#/definitions/CurrencyRef'
-          toolInfo:
-            $ref: '#/definitions/PayoutToolInfo'
+          - RussianBankAccount
+          - InternationalBankAccount
+          - WalletInfo
   PowerOfAttorney:
     description: Юридическое соглашение
     type: object
@@ -1215,12 +1239,9 @@ definitions:
             type: string
   ReportPreferences:
     type: object
-    allOf:
-      - $ref: '#/definitions/ContractModification'
-      - type: object
-        properties:
-          serviceAcceptanceActPreferences:
-            $ref: '#/definitions/ServiceAcceptanceActPreferences'
+    properties:
+      serviceAcceptanceActPreferences:
+        $ref: '#/definitions/ServiceAcceptanceActPreferences'
   Representative:
     type: object
     required:
