@@ -1,14 +1,11 @@
 type: object
-allOf:
-  - $ref: '#/definitions/PayoutToolModification'
-  - type: object
-    discriminator: payoutToolType
-    required:
-      - payoutToolType
-    properties:
-      payoutToolType:
-        type: string
-        enum:
-          - RussianBankAccount
-          - InternationalBankAccount
-          - WalletInfo
+discriminator: payoutToolType
+required:
+  - payoutToolType
+properties:
+  payoutToolType:
+    type: string
+    enum:
+      - RussianBankAccount
+      - InternationalBankAccount
+      - WalletInfo
