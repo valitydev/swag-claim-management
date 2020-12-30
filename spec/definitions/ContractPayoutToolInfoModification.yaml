@@ -3,7 +3,7 @@ allOf:
   - $ref: '#/definitions/PayoutToolModification'
   - type: object
     required:
-      - PayoutToolInfo
+      - payoutToolInfo
     properties:
-      PayoutToolInfo:
+      payoutToolInfo:
         $ref: '#/definitions/CurrencyRef'
