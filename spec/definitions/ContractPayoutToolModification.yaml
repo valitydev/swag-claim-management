@@ -6,5 +6,5 @@ properties:
   payoutToolModificationType:
     type: string
     enum:
-      - PayoutToolCreationModification
-      - PayoutToolInfoModification
+      - ContractPayoutToolCreationModification
+      - ContractPayoutToolInfoModification
