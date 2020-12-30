@@ -6,4 +6,4 @@ allOf:
       - reportPreferences
     properties:
       reportPreferences:
-        $ref: '#/definitions/reportPreferences'
+        $ref: '#/definitions/ReportPreferences'
