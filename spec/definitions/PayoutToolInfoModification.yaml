@@ -1,4 +1,0 @@
-type: object
-allOf:
-  - $ref: '#/definitions/PayoutToolModification'
-  - $ref: '#/definitions/PayoutToolInfo'
