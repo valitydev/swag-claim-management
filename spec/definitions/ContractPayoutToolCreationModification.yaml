@@ -1,6 +1,6 @@
 type: object
 allOf:
-  - $ref: '#/definitions/PayoutToolModification'
+  - $ref: '#/definitions/ContractPayoutToolModification'
   - type: object
     required:
       - currency
