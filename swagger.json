@@ -1128,7 +1128,7 @@
           ],
           "properties": {
             "payoutToolInfo": {
-              "$ref": "#/definitions/CurrencyRef"
+              "$ref": "#/definitions/PayoutToolInfo"
             }
           }
         }
