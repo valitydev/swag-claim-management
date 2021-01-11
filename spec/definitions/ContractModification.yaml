@@ -9,7 +9,7 @@ properties:
       - ContractCreationModification
       - ContractTerminationModification
       - ContractAdjustmentModificationUnit
-      - PayoutToolModificationUnit
+      - ContractPayoutToolModificationUnit
       - ContractLegalAgreementBindingModification
       - ContractReportPreferencesModification
       - ContractContractorModification
