@@ -8,3 +8,4 @@ properties:
     enum:
       - FileCreated
       - FileDeleted
+      - FileChanged
