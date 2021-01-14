@@ -1304,6 +1304,14 @@
         }
       }
     },
+    "DocumentChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DocumentModification"
+        }
+      ]
+    },
     "DocumentCreated": {
       "type": "object",
       "allOf": [
@@ -1322,7 +1330,8 @@
         "documentModificationType": {
           "type": "string",
           "enum": [
-            "DocumentCreated"
+            "DocumentCreated",
+            "DocumentChanged"
           ]
         }
       }

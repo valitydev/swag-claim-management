@@ -908,6 +908,10 @@ definitions:
       message:
         description: Человекочитаемое описание ошибки
         type: string
+  DocumentChanged:
+    type: object
+    allOf:
+      - $ref: '#/definitions/DocumentModification'
   DocumentCreated:
     type: object
     allOf:
@@ -922,6 +926,7 @@ definitions:
         type: string
         enum:
           - DocumentCreated
+          - DocumentChanged
   DocumentModificationUnit:
     type: object
     allOf:
