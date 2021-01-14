@@ -753,6 +753,14 @@
         }
       ]
     },
+    "CommentChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommentModification"
+        }
+      ]
+    },
     "CommentCreated": {
       "type": "object",
       "allOf": [
@@ -781,7 +789,8 @@
           "type": "string",
           "enum": [
             "CommentCreated",
-            "CommentDeleted"
+            "CommentDeleted",
+            "CommentChanged"
           ]
         }
       }
@@ -1362,6 +1371,14 @@
         }
       ]
     },
+    "FileChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileModification"
+        }
+      ]
+    },
     "FileCreated": {
       "type": "object",
       "allOf": [
@@ -1389,7 +1406,8 @@
           "type": "string",
           "enum": [
             "FileCreated",
-            "FileDeleted"
+            "FileDeleted",
+            "FileChanged"
           ]
         }
       }
