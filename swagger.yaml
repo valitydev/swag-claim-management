@@ -1065,6 +1065,9 @@ definitions:
           tradingName:
             description: Торговое наименование
             type: string
+          country:
+            description: Страна мерчанта
+            type: string
   InvalidChangeset:
     description: Невалидный набор изменений
     type: object

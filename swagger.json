@@ -1548,6 +1548,10 @@
             "tradingName": {
               "description": "Торговое наименование",
               "type": "string"
+            },
+            "country": {
+              "description": "Страна мерчанта",
+              "type": "string"
             }
           }
         }
