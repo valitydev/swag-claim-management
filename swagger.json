@@ -703,7 +703,8 @@
             "DocumentModificationUnit",
             "FileModificationUnit",
             "CommentModificationUnit",
-            "StatusModificationUnit"
+            "StatusModificationUnit",
+            "ExternalInfoModificationUnit"
           ]
         }
       }
@@ -1366,6 +1367,34 @@
             },
             "documentModification": {
               "$ref": "#/definitions/DocumentModification"
+            }
+          }
+        }
+      ]
+    },
+    "ExternalInfoModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "documentId"
+          ],
+          "properties": {
+            "documentId": {
+              "description": "Идентификатор заявки в CRM",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "roistatId": {
+              "description": "Идентификатор заявки в системе roistat",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
             }
           }
         }
