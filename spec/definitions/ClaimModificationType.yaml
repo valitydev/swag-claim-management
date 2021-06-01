@@ -10,3 +10,4 @@ properties:
       - FileModificationUnit
       - CommentModificationUnit
       - StatusModificationUnit
+      - ExternalInfoModificationUnit
