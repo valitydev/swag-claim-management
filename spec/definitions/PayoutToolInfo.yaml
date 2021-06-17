@@ -9,3 +9,4 @@ properties:
       - RussianBankAccount
       - InternationalBankAccount
       - WalletInfo
+      - PaymentInstitutionAccount
