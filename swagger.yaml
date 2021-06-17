@@ -1235,6 +1235,7 @@ definitions:
           - RussianBankAccount
           - InternationalBankAccount
           - WalletInfo
+          - PaymentInstitutionAccount
   PowerOfAttorney:
     description: Юридическое соглашение
     type: object

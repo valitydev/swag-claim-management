@@ -1807,7 +1807,8 @@
           "enum": [
             "RussianBankAccount",
             "InternationalBankAccount",
-            "WalletInfo"
+            "WalletInfo",
+            "PaymentInstitutionAccount"
           ]
         }
       }
