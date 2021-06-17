@@ -110,6 +110,12 @@ parameters:
     type: string
     maxLength: 32
     minLength: 1
+  partyID:
+    name: partyID
+    in: query
+    description: Идентификатор участника
+    required: true
+    type: string
   claimID:
     name: claimID
     in: path
@@ -230,6 +236,7 @@ paths:
         - Claims
       parameters:
         - $ref: '#/parameters/requestID'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/deadline'
         - name: changeset
           in: body
@@ -294,6 +301,7 @@ paths:
         - Claims
       parameters:
         - $ref: '#/parameters/requestID'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/deadline'
         - $ref: '#/parameters/claimID'
         - $ref: '#/parameters/claimRevision'
@@ -332,6 +340,7 @@ paths:
         - Claims
       parameters:
         - $ref: '#/parameters/requestID'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/deadline'
         - $ref: '#/parameters/claimID'
         - $ref: '#/parameters/claimRevision'
@@ -374,6 +383,7 @@ paths:
         - Claims
       parameters:
         - $ref: '#/parameters/requestID'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/deadline'
         - $ref: '#/parameters/claimID'
         - $ref: '#/parameters/claimRevision'
