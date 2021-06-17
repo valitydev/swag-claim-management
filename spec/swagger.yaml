@@ -112,6 +112,12 @@ parameters:
     type: string
     maxLength: 32
     minLength: 1
+  partyID:
+    name: partyID
+    in: query
+    description: Идентификатор участника
+    required: true
+    type: string
   claimID:
     name: claimID
     in: path

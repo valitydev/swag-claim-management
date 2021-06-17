@@ -71,6 +71,7 @@ post:
     - Claims
   parameters:
     - $ref: '#/parameters/requestID'
+    - $ref: '#/parameters/partyID'
     - $ref: '#/parameters/deadline'
     - name: changeset
       in: body
