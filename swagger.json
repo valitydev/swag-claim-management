@@ -1759,6 +1759,14 @@
         }
       }
     },
+    "PaymentInstitutionAccount": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        }
+      ]
+    },
     "PaymentInstitutionRef": {
       "type": "object",
       "required": [

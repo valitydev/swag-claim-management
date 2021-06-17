@@ -1200,6 +1200,10 @@ definitions:
           - ContractorModificationUnit
           - ContractModificationUnit
           - ShopModificationUnit
+  PaymentInstitutionAccount:
+    type: object
+    allOf:
+      - $ref: '#/definitions/PayoutToolInfo'
   PaymentInstitutionRef:
     type: object
     required:
