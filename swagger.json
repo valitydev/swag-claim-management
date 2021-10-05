@@ -138,6 +138,9 @@
             "$ref": "#/parameters/requestID"
           },
           {
+            "$ref": "#/parameters/partyID"
+          },
+          {
             "$ref": "#/parameters/deadline"
           },
           {

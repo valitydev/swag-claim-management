@@ -170,6 +170,7 @@ paths:
         - Claims
       parameters:
         - $ref: '#/parameters/requestID'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/deadline'
         - $ref: '#/parameters/limit'
         - $ref: '#/parameters/continuationToken'
