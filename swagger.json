@@ -306,6 +306,9 @@
             "$ref": "#/parameters/deadline"
           },
           {
+            "$ref": "#/parameters/partyID"
+          },
+          {
             "$ref": "#/parameters/claimID"
           }
         ],

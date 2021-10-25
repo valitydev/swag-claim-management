@@ -282,6 +282,7 @@ paths:
       parameters:
         - $ref: '#/parameters/requestID'
         - $ref: '#/parameters/deadline'
+        - $ref: '#/parameters/partyID'
         - $ref: '#/parameters/claimID'
       responses:
         '200':
