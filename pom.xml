@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.rbkmoney</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.0</version>
+        <groupId>dev.vality</groupId>
+        <artifactId>library-parent-pom</artifactId>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>swag-claim-management</artifactId>
@@ -19,7 +19,7 @@
     </description>
 
     <properties>
-        <default.package>com.rbkmoney.swag.claim_management</default.package>
+        <default.package>dev.vality.swag.claim_management</default.package>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <java.version>1.8</java.version>
@@ -123,6 +123,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.threeten</groupId>
+            <artifactId>threetenbp</artifactId>
+            <version>1.5.2</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
