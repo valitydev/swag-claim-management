@@ -1,8 +1,7 @@
 {
-  "name": "swag-claim-management",
+  "name": "@vality/swag-claim-management",
   "version": "0.1.0",
-  "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "scripts": {
     "start": "gulp serve",
     "build": "node ./scripts/build.js",
@@ -10,9 +9,11 @@
     "validate": "swagger-repo validate",
     "prettier": "prettier \"**/*.{js,ts,md,json,prettierrc,html}\"",
     "check": "npm run prettier -- --list-different",
-    "fix": "npm run prettier -- --write"
+    "fix": "npm run prettier -- --write",
+    "codegen": "vality-openapi generate ./web_deploy/swagger.json"
   },
   "devDependencies": {
+    "@vality/openapi-generator-cli": "0.1.1-91ea45c.0",
     "connect": "^3.4.1",
     "cors": "^2.7.1",
     "deploy-to-gh-pages": "^1.1.0",
