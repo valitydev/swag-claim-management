@@ -1,0 +1,22 @@
+type: object
+allOf:
+  - $ref: '#/definitions/Modification'
+  - type: object
+    required:
+      - name
+      - identityID
+      - currency
+    properties:
+      name:
+        type: string
+      identityID:
+        type: string
+      currency:
+        $ref: '#/definitions/CurrencyRef'
+      metadata:
+        description: |
+          Произвольный, специфичный для клиента API и непрозрачный для системы набор данных, ассоциированных с
+          данным кошельком
+        type: object
+        example:
+          client_locale: RU_ru
