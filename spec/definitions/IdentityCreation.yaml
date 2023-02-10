@@ -15,8 +15,6 @@ allOf:
         description: Идентификатор провайдера услуг
         type: string
         example: serviceprovider
-      currency:
-        $ref: '#/definitions/CurrencyRef'
       metadata:
         description: |
           Произвольный, специфичный для клиента API и непрозрачный для системы набор данных, ассоциированных с
