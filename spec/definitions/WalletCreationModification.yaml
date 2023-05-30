@@ -1,6 +1,6 @@
 type: object
 allOf:
-  - $ref: '#/definitions/Modification'
+  - $ref: '#/definitions/WalletModification'
   - type: object
     required:
       - name

@@ -1,0 +1,9 @@
+type: object
+discriminator: walletModificationType
+required:
+  - walletModificationType
+properties:
+  walletModificationType:
+    type: string
+    enum:
+      - WalletCreationModification

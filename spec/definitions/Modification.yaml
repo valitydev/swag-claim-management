@@ -9,5 +9,5 @@ properties:
     enum:
       - PartyModification
       - ClaimModification
-      - IdentityCreation
-      - WalletCreation
+      - IdentityModificationUnit
+      - WalletModificationUnit
