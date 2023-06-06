@@ -1,0 +1,9 @@
+type: object
+discriminator: identityModificationType
+required:
+  - identityModificationType
+properties:
+  identityModificationType:
+    type: string
+    enum:
+      - IdentityCreationModification

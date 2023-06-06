@@ -1,0 +1,24 @@
+type: object
+allOf:
+  - $ref: '#/definitions/IdentityModification'
+  - type: object
+    required:
+      - partyID
+      - name
+      - provider
+    properties:
+      partyID:
+        type: string
+      name:
+        type: string
+      provider:
+        description: Идентификатор провайдера услуг
+        type: string
+        example: serviceprovider
+      metadata:
+        description: |
+          Произвольный, специфичный для клиента API и непрозрачный для системы набор данных, ассоциированных с
+          данной личностью владельца
+        type: object
+        example:
+          lkDisplayName: Сергей Иванович
