@@ -1,17 +1,16 @@
-name: Maven Deploy Artifact
+name: Deploy Artifact
 
 on:
   push:
-    branches:
-      - 'master'
-      - 'main'
+    branches: [master]
 
 jobs:
   deploy:
-    uses: valitydev/base-workflow/.github/workflows/maven-swag-deploy.yml@v1
+    uses: valitydev/java-workflow/.github/workflows/maven-swag-deploy.yml@v2
     secrets:
       server-username: ${{ secrets.OSSRH_USERNAME }}
       server-password: ${{ secrets.OSSRH_TOKEN }}
       deploy-secret-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
       deploy-secret-key-password: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      mm-webhook-url: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
