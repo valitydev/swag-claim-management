@@ -1,10 +1,13 @@
 type: object
-required:
-  - id
-  - modification
-properties:
-  id:
-    description: Идентификатор
-    type: string
-  modification:
-    $ref: '#/definitions/WalletModification'
+allOf:
+  - $ref: '#/definitions/Modification'
+  - type: object
+    required:
+      - id
+      - modification
+    properties:
+      id:
+        description: Идентификатор
+        type: string
+      modification:
+        $ref: '#/definitions/WalletModification'
