@@ -65,3 +65,4 @@ package-lock.json
 
 # Frontend
 /lib
+.openapitools.json
