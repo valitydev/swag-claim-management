@@ -1,0 +1,9 @@
+type: object
+discriminator: additionalInfoModificationType
+required:
+  - additionalInfoModificationType
+properties:
+  additionalInfoModificationType:
+    type: string
+    enum:
+      - AdditionalInfoModification
