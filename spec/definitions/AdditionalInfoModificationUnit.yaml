@@ -1,0 +1,14 @@
+type: object
+allOf:
+  - $ref: '#/definitions/PartyModificationType'
+  - type: object
+    properties:
+      partyName:
+        description: Имя party
+        type: string
+      managerContactEmails:
+        description: Список почт для связи с менеджерами
+        type: array
+      comment:
+        description: Коментарий
+        type: string

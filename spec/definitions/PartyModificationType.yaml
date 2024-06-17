@@ -9,3 +9,4 @@ properties:
       - ContractorModificationUnit
       - ContractModificationUnit
       - ShopModificationUnit
+      - AdditionalInfoModificationUnit
