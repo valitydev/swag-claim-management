@@ -20,9 +20,3 @@ exec('npm run swagger bundle -- --yaml -o ' + TARGET_DIR + '/swagger.yaml');
 var SWAGGER_UI_DIST = Path.dirname(require.resolve('swagger-ui'));
 rm('-rf', TARGET_DIR + '/swagger-ui/');
 cp('-R', SWAGGER_UI_DIST, TARGET_DIR + '/swagger-ui/');
-sed(
-  '-i',
-  'https://developer.rbk.money/api/swagger.json',
-  '../swagger.json',
-  TARGET_DIR + '/swagger-ui/index.html'
-);
