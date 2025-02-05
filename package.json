@@ -20,7 +20,7 @@
     "gulp": "^3.9.1",
     "gulp-connect": "^4.2.0",
     "gulp-util": "^3.0.7",
-    "json-merge-patch": "^0.2.3",
+    "json-merge-patch": "^1.0.0",
     "portfinder": "^1.0.3",
     "prettier": "^1.18.2",
     "shelljs": "^0.8.0",
