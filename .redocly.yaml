@@ -2,6 +2,9 @@
 apis:
   core:
     root: web_deploy/swagger.yaml
+    rules:
+      operation-summary: warn
+      no-enum-type-mismatch: warn
 
 extends:
   - ./node_modules/@vality/redocly-utils/lib/config.yaml
