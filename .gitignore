@@ -65,4 +65,7 @@ package-lock.json
 
 # Frontend
 /lib
-.openapitools.json
+/vality-openapi
+/web_deploy
+/scripts
+openapitools.json
