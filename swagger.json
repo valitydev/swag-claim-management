@@ -1,0 +1,2622 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.1.0",
+    "title": "Claim Management API",
+    "description": "\n## Описание\n\nClaim Management API служит для управления заявками. Любые сторонние\nприложения, включая наши веб-сайты и другие UI-интерфейсы являются внешними\nприложениями-клиентами.\n\nAPI работает поверх HTTP-протокола. Мы используем REST архитектуру,\nсхема описывается в соответствии со [Swagger](http://swagger.io/). Коды\nвозврата описываются соответствующими HTTP-статусами. Платформа принимает и\nвозвращает JSON-структуры в HTTP body.\n\n## Запросы\n\nЛюбой вызов методов API обязан предваряться предоставлением уникального для\nучастника в пределах платформы ID запроса. Данный ID передается в\nсоответствующем заголовке HTTP-запроса:\n\n```\n X-Request-ID: oX5MWM2AQy\n```\n\n## Тип содержимого и кодировка\n\nЛюбой запрос к API должен выполняться в кодировке UTF-8 и с указанием\nсодержимого в формате JSON\n\n```\n  Content-Type: application/json; charset=utf-8\n```\n\n## Формат дат\n\nПлатформа принимает значения date-time в стандарте ISO 8601 с обязательным\nуказанием UTC-оффсета, например:\n\n```\n  2017-01-01T00:00:00Z\n  2017-01-01T00:00:01+00:00\n```\n\n## Максимальное время обработки запроса\n\nК любому вызову методов API можно добавить параметр отсечки по времени,\nопределяющий максимальное время ожидания завершения операции по запросу.\nДанная отсечка передается в соответствующем заголовке HTTP-запроса:\n\n```\n X-Request-Deadline: 10s\n```\n\nЗначение отсечки может быть задано в формате ISO 8601 (см. [Формат дат](#section/Format-dat)), либо\nв относительных величинах, например:\n\n`150000ms`, `540s`, `3.5m`\nПри этом возможные единицы измерения `ms`, `s`, `m`.\nВ обоих случаях  не рекомендуется, чтобы задаваемое значение было\nменьше **3 секунд** и превышало **1 минуту**.\n"
+  },
+  "basePath": "/claim-management/v0",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json; charset=utf-8"
+  ],
+  "produces": [
+    "application/json; charset=utf-8"
+  ],
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Для аутентификации вызовов мы используем [JWT](https://jwt.io). Cоответствующий ключ передается в заголовке.\n```shell\n Authorization: Bearer {TOKENIZATION|PRIVATE_JWT}\n```\n"
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "responses": {
+    "NotFound": {
+      "description": "Заданный ресурс не найден",
+      "schema": {
+        "$ref": "#/definitions/GeneralError"
+      }
+    },
+    "Unauthorized": {
+      "description": "Ошибка авторизации"
+    },
+    "DefaultLogicError": {
+      "description": "Неверные данные",
+      "schema": {
+        "$ref": "#/definitions/DefaultLogicError"
+      }
+    },
+    "GeneralError": {
+      "description": "Неверные данные",
+      "schema": {
+        "$ref": "#/definitions/GeneralError"
+      }
+    }
+  },
+  "parameters": {
+    "requestID": {
+      "name": "X-Request-ID",
+      "in": "header",
+      "description": "Уникальный идентификатор запроса к системе",
+      "required": true,
+      "type": "string",
+      "maxLength": 32,
+      "minLength": 1
+    },
+    "partyID": {
+      "name": "partyID",
+      "in": "query",
+      "description": "Идентификатор участника",
+      "required": true,
+      "type": "string"
+    },
+    "claimID": {
+      "name": "claimID",
+      "in": "path",
+      "description": "Идентификатор заявки",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+    },
+    "claimRevision": {
+      "name": "claimRevision",
+      "in": "query",
+      "description": "Версия заявки",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+    },
+    "limit": {
+      "name": "limit",
+      "in": "query",
+      "description": "Лимит выборки",
+      "required": true,
+      "type": "integer",
+      "format": "int32",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "deadline": {
+      "name": "X-Request-Deadline",
+      "in": "header",
+      "description": "Максимальное время обработки запроса",
+      "required": false,
+      "type": "string",
+      "maxLength": 40,
+      "minLength": 1
+    },
+    "continuationToken": {
+      "name": "continuationToken",
+      "in": "query",
+      "required": false,
+      "description": "Токен, сигнализирующий о том, что в ответе передана только часть данных.\nДля получения следующей части нужно повторно обратиться к сервису, указав тот-же набор условий и полученый токен.\nЕсли токена нет, получена последняя часть данных.\n",
+      "type": "string"
+    }
+  },
+  "tags": [
+    {
+      "name": "Claims",
+      "x-displayName": "Заявки",
+      "description": "Некоторая область данных может быть изменена только после премодерации на стороне платформы. Например, создание и активация новых магазинов, изменение финансовых данных вашего участника и т.п. требуют ручной проверки сотрудниками. Попытка изменить такие данные приводит к автоматическому созданию заявки на изменение данных. До тех пор, пока заявка не одобрена, вы можете добавлять изменения. После одобрения они будут применены к набору данных. В случае отказа по заявке данные останутся в неизменном состоянии. Ближайшим аналогом заявок можно представить Pull Request в распределенных системах контроля версий.\n"
+    }
+  ],
+  "paths": {
+    "/processing/claims": {
+      "get": {
+        "description": "Поиск заявок участника",
+        "operationId": "searchClaims",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/continuationToken"
+          },
+          {
+            "name": "claimID",
+            "in": "query",
+            "description": "Идентификатор заявки",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "claimStatuses",
+            "in": "query",
+            "description": "Статус заявки для поиска",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "review",
+                "pendingAcceptance",
+                "accepted",
+                "denied",
+                "revoked"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Найденные заявки",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "continuationToken": {
+                  "$ref": "#/definitions/ContinuationToken"
+                },
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Claim"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибочные данные в поиске заявки участника",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "limitExceeded",
+                    "badContinuationToken",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid limit exceeded"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "description": "Создать новую заявку с заданным набором изменений и отправить её на\nпремодерацию.\n",
+        "operationId": "createClaim",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "name": "changeset",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Modification"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Заявка создана",
+            "schema": {
+              "$ref": "#/definitions/Claim"
+            }
+          },
+          "400": {
+            "description": "Ошибочные данные в заявке",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "invalidChangeset",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Changeset conflict"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/processing/claims/{claimID}": {
+      "get": {
+        "description": "Получить заявку по её идентификатору.\n",
+        "operationId": "getClaimByID",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/claimID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Данные заявки",
+            "schema": {
+              "$ref": "#/definitions/Claim"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/GeneralError"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/processing/claims/{claimID}/review": {
+      "put": {
+        "description": "Отправить заявку на ревью по её идентификатору.",
+        "operationId": "requestReviewClaimByID",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/claimID"
+          },
+          {
+            "$ref": "#/parameters/claimRevision"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Заявка отправлена на ревью"
+          },
+          "400": {
+            "description": "Ошибка отправки заявки на ревью",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "invalidClaimStatus",
+                    "invalidClaimRevision",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid claim status"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/processing/claims/{claimID}/revoke": {
+      "put": {
+        "description": "Отозвать заявку по её идентификатору.",
+        "operationId": "revokeClaimByID",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/claimID"
+          },
+          {
+            "$ref": "#/parameters/claimRevision"
+          },
+          {
+            "name": "reason",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Reason"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Заявка отозвана"
+          },
+          "400": {
+            "description": "Ошибка отзыва заявки",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "invalidClaimStatus",
+                    "invalidClaimRevision",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid claim status"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/processing/claims/{claimID}/update": {
+      "put": {
+        "description": "Обновить заявку по её идентификатору.",
+        "operationId": "updateClaimByID",
+        "tags": [
+          "Claims"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/requestID"
+          },
+          {
+            "$ref": "#/parameters/partyID"
+          },
+          {
+            "$ref": "#/parameters/deadline"
+          },
+          {
+            "$ref": "#/parameters/claimID"
+          },
+          {
+            "$ref": "#/parameters/claimRevision"
+          },
+          {
+            "name": "changeset",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Modification"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Заявка обновлена"
+          },
+          "400": {
+            "description": "Ошибка при изменении заявки",
+            "schema": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "properties": {
+                "code": {
+                  "description": "[Код ошибки](#tag/Error-Codes)\n",
+                  "type": "string",
+                  "enum": [
+                    "invalidClaimStatus",
+                    "changesetConflict",
+                    "invalidChangeset",
+                    "invalidClaimRevision",
+                    "invalidDeadline"
+                  ]
+                },
+                "message": {
+                  "description": "Человекочитаемое описание ошибки",
+                  "type": "string",
+                  "example": "Invalid claim status"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AdditionalInfoModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModificationType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "partyName": {
+              "description": "Имя party",
+              "type": "string"
+            },
+            "managerContactEmails": {
+              "description": "Список почт для связи с менеджерами",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "comment": {
+              "description": "Коментарий",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ArticlesOfAssociation": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/RepresentativeDocument"
+        }
+      ]
+    },
+    "BusinessScheduleRef": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "CardData": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PaymentTool"
+        },
+        {
+          "type": "object",
+          "description": "Банковская карта",
+          "required": [
+            "cardNumber",
+            "expDate"
+          ],
+          "properties": {
+            "cardNumber": {
+              "description": "Номер банковской карты",
+              "type": "string",
+              "pattern": "^\\d{12,19}$"
+            },
+            "expDate": {
+              "description": "Срок действия банковской карты",
+              "type": "string",
+              "pattern": "^\\d{2}\\/(\\d{2}|\\d{4})$"
+            },
+            "cvv": {
+              "description": "Код верификации",
+              "type": "string",
+              "pattern": "^\\d{3,4}$"
+            },
+            "cardHolder": {
+              "description": "Имя держателя карты",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        }
+      ]
+    },
+    "CategoryRef": {
+      "type": "object",
+      "required": [
+        "categoryID"
+      ],
+      "properties": {
+        "categoryID": {
+          "description": "Идентификатор категории товаров и услуг, предлагаемых в этом магазине\n",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Claim": {
+      "description": "Заявка",
+      "type": "object",
+      "discriminator": "status",
+      "required": [
+        "id",
+        "status",
+        "changeset",
+        "revision",
+        "createdAt"
+      ],
+      "properties": {
+        "id": {
+          "description": "Идентификатор заявки",
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "description": "Статус заявки",
+          "type": "string"
+        },
+        "changeset": {
+          "$ref": "#/definitions/ClaimChangeset"
+        },
+        "revision": {
+          "description": "Версия заявки",
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "description": "Дата создания",
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "description": "Дата изменения",
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "description": "Связанные с заявкой метаданные",
+          "type": "object"
+        }
+      }
+    },
+    "ClaimAccepted": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        }
+      ]
+    },
+    "ClaimChangeset": {
+      "description": "Набор изменений",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ModificationUnit"
+      }
+    },
+    "ClaimDenied": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "description": "Причина отклонения заявки",
+              "type": "string",
+              "maxLength": 1000
+            }
+          }
+        }
+      ]
+    },
+    "ClaimModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Modification"
+        },
+        {
+          "type": "object",
+          "discriminator": "claimModificationType",
+          "required": [
+            "claimModificationType"
+          ],
+          "properties": {
+            "claimModificationType": {
+              "$ref": "#/definitions/ClaimModificationType"
+            }
+          }
+        }
+      ]
+    },
+    "ClaimModificationType": {
+      "type": "object",
+      "discriminator": "claimModificationType",
+      "required": [
+        "claimModificationType"
+      ],
+      "properties": {
+        "claimModificationType": {
+          "type": "string",
+          "enum": [
+            "DocumentModificationUnit",
+            "FileModificationUnit",
+            "CommentModificationUnit",
+            "StatusModificationUnit",
+            "ExternalInfoModificationUnit"
+          ]
+        }
+      }
+    },
+    "ClaimPending": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        }
+      ]
+    },
+    "ClaimPendingAcceptance": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        }
+      ]
+    },
+    "ClaimReview": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        }
+      ]
+    },
+    "ClaimRevoked": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Claim"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reason"
+          ],
+          "properties": {
+            "reason": {
+              "description": "Причина отзыва заявки",
+              "type": "string",
+              "maxLength": 1000
+            }
+          }
+        }
+      ]
+    },
+    "CommentChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommentModification"
+        }
+      ]
+    },
+    "CommentCreated": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommentModification"
+        }
+      ]
+    },
+    "CommentDeleted": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CommentModification"
+        }
+      ]
+    },
+    "CommentModification": {
+      "description": "Единичное изменение комментария",
+      "type": "object",
+      "discriminator": "commentModificationType",
+      "required": [
+        "commentModificationType"
+      ],
+      "properties": {
+        "commentModificationType": {
+          "type": "string",
+          "enum": [
+            "CommentCreated",
+            "CommentDeleted",
+            "CommentChanged"
+          ]
+        }
+      }
+    },
+    "CommentModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "commentId",
+            "commentModification"
+          ],
+          "properties": {
+            "commentId": {
+              "description": "Идентификатор комментария",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "commentModification": {
+              "$ref": "#/definitions/CommentModification"
+            }
+          }
+        }
+      ]
+    },
+    "ContactInfo": {
+      "description": "Информация о контакте",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "ContinuationToken": {
+      "description": "Токен, сигнализирующий о том, что в ответе передана только часть данных.\nДля получения следующей части нужно повторно обратиться к сервису, указав тот-же набор условий и полученый токен.\nЕсли токена нет, получена последняя часть данных.\n",
+      "type": "string"
+    },
+    "ContractAdjustmentModification": {
+      "type": "object",
+      "required": [
+        "creation"
+      ],
+      "properties": {
+        "creation": {
+          "$ref": "#/definitions/ContractAdjustmentParams"
+        }
+      }
+    },
+    "ContractAdjustmentModificationUnit": {
+      "type": "object",
+      "required": [
+        "adjustmentID",
+        "modification"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "adjustmentID": {
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/ContractAdjustmentModification"
+            }
+          }
+        }
+      ]
+    },
+    "ContractAdjustmentParams": {
+      "type": "object",
+      "required": [
+        "template"
+      ],
+      "properties": {
+        "template": {
+          "$ref": "#/definitions/ContractTemplateRef"
+        }
+      }
+    },
+    "ContractContractorModification": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contractorID"
+          ],
+          "properties": {
+            "contractorID": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ContractCreationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contractorID": {
+              "type": "string"
+            },
+            "template": {
+              "$ref": "#/definitions/ContractTemplateRef"
+            },
+            "paymentInstitution": {
+              "$ref": "#/definitions/PaymentInstitutionRef"
+            }
+          }
+        }
+      ]
+    },
+    "ContractLegalAgreementBindingModification": {
+      "description": "Юридическое соглашение",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "legalAgreement"
+          ],
+          "properties": {
+            "legalAgreement": {
+              "$ref": "#/definitions/LegalAgreement"
+            }
+          }
+        }
+      ]
+    },
+    "ContractModification": {
+      "type": "object",
+      "discriminator": "contractModificationType",
+      "required": [
+        "contractModificationType"
+      ],
+      "properties": {
+        "contractModificationType": {
+          "type": "string",
+          "enum": [
+            "ContractCreationModification",
+            "ContractTerminationModification",
+            "ContractAdjustmentModificationUnit",
+            "ContractPayoutToolModificationUnit",
+            "ContractLegalAgreementBindingModification",
+            "ContractReportPreferencesModification",
+            "ContractContractorModification"
+          ]
+        }
+      }
+    },
+    "ContractModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "modification"
+          ],
+          "properties": {
+            "id": {
+              "description": "Идентификатор договора",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "modification": {
+              "$ref": "#/definitions/ContractModification"
+            }
+          }
+        }
+      ]
+    },
+    "Contractor": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "contractorType",
+          "required": [
+            "contractorType"
+          ],
+          "properties": {
+            "contractorType": {
+              "$ref": "#/definitions/ContractorType"
+            }
+          }
+        }
+      ]
+    },
+    "ContractorIdentificationLevel": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "ContractorIdentificationLevel",
+          "required": [
+            "ContractorIdentificationLevel"
+          ],
+          "properties": {
+            "ContractorIdentificationLevel": {
+              "type": "integer",
+              "enum": [
+                {
+                  "value": 100,
+                  "name": "none"
+                },
+                {
+                  "value": 200,
+                  "name": "partial"
+                },
+                {
+                  "value": 300,
+                  "name": "full"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ContractorModification": {
+      "type": "object",
+      "discriminator": "contractorModificationType",
+      "required": [
+        "contractorModificationType"
+      ],
+      "properties": {
+        "contractorModificationType": {
+          "type": "string",
+          "enum": [
+            "Contractor",
+            "ContractorIdentificationLevel",
+            "ContractorIdentityDocumentsModification"
+          ]
+        }
+      }
+    },
+    "ContractorModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "modification"
+          ],
+          "properties": {
+            "id": {
+              "description": "Идентификатор",
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/ContractorModification"
+            }
+          }
+        }
+      ]
+    },
+    "ContractorType": {
+      "type": "object",
+      "discriminator": "contractorType",
+      "required": [
+        "contractorType"
+      ],
+      "properties": {
+        "contractorType": {
+          "type": "string",
+          "enum": [
+            "LegalEntity",
+            "RegisteredUser",
+            "PrivateEntity"
+          ]
+        }
+      }
+    },
+    "ContractPayoutToolCreationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractPayoutToolModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency",
+            "toolInfo"
+          ],
+          "properties": {
+            "currency": {
+              "$ref": "#/definitions/CurrencyRef"
+            },
+            "toolInfo": {
+              "$ref": "#/definitions/PayoutToolInfo"
+            }
+          }
+        }
+      ]
+    },
+    "ContractPayoutToolInfoModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractPayoutToolModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "payoutToolInfo"
+          ],
+          "properties": {
+            "payoutToolInfo": {
+              "$ref": "#/definitions/PayoutToolInfo"
+            }
+          }
+        }
+      ]
+    },
+    "ContractPayoutToolModification": {
+      "type": "object",
+      "discriminator": "payoutToolModificationType",
+      "required": [
+        "payoutToolModificationType"
+      ],
+      "properties": {
+        "payoutToolModificationType": {
+          "type": "string",
+          "enum": [
+            "ContractPayoutToolCreationModification",
+            "ContractPayoutToolInfoModification"
+          ]
+        }
+      }
+    },
+    "ContractPayoutToolModificationUnit": {
+      "type": "object",
+      "required": [
+        "payoutToolID",
+        "modification"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "payoutToolID": {
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/ContractPayoutToolModification"
+            }
+          }
+        }
+      ]
+    },
+    "ContractReportPreferencesModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reportPreferences"
+          ],
+          "properties": {
+            "reportPreferences": {
+              "$ref": "#/definitions/ReportPreferences"
+            }
+          }
+        }
+      ]
+    },
+    "ContractTemplateRef": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ContractTerminationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "CorrespondentAccount": {
+      "description": "Корреспондентский банковский счёт",
+      "type": "object",
+      "required": [
+        "accountHolder",
+        "iban",
+        "number",
+        "bank"
+      ],
+      "properties": {
+        "accountHolder": {
+          "type": "string"
+        },
+        "iban": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        },
+        "bank": {
+          "$ref": "#/definitions/CorrespondentBankDetails"
+        }
+      }
+    },
+    "CorrespondentBankDetails": {
+      "description": "Детальная информация по корр. банковскому счёту",
+      "type": "object",
+      "required": [
+        "abaRtn",
+        "address",
+        "bic",
+        "name",
+        "country"
+      ],
+      "properties": {
+        "abaRtn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "CurrencyRef": {
+      "type": "object",
+      "required": [
+        "symbolicCode"
+      ],
+      "properties": {
+        "symbolicCode": {
+          "type": "string"
+        }
+      }
+    },
+    "DefaultLogicError": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "description": "[Код ошибки](#tag/Error-Codes)\n",
+          "type": "string",
+          "enum": [
+            "invalidRequest",
+            "invalidDeadline"
+          ]
+        },
+        "message": {
+          "description": "Человекочитаемое описание ошибки",
+          "type": "string"
+        }
+      }
+    },
+    "DocumentChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DocumentModification"
+        }
+      ]
+    },
+    "DocumentCreated": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DocumentModification"
+        }
+      ]
+    },
+    "DocumentModification": {
+      "type": "object",
+      "discriminator": "documentModificationType",
+      "required": [
+        "documentModificationType"
+      ],
+      "properties": {
+        "documentModificationType": {
+          "type": "string",
+          "enum": [
+            "DocumentCreated",
+            "DocumentChanged"
+          ]
+        }
+      }
+    },
+    "DocumentModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "documentId",
+            "documentModification"
+          ],
+          "properties": {
+            "documentId": {
+              "description": "Идентификатор документа",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "documentModification": {
+              "$ref": "#/definitions/DocumentModification"
+            }
+          }
+        }
+      ]
+    },
+    "ExternalInfoModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "documentId"
+          ],
+          "properties": {
+            "documentId": {
+              "description": "Идентификатор заявки в CRM",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "roistatId": {
+              "description": "Идентификатор заявки в системе roistat",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "FileChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileModification"
+        }
+      ]
+    },
+    "FileCreated": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileModification"
+        }
+      ]
+    },
+    "FileDeleted": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileModification"
+        }
+      ]
+    },
+    "FileModification": {
+      "type": "object",
+      "discriminator": "fileModificationType",
+      "required": [
+        "fileModificationType"
+      ],
+      "properties": {
+        "fileModificationType": {
+          "type": "string",
+          "enum": [
+            "FileCreated",
+            "FileDeleted",
+            "FileChanged"
+          ]
+        }
+      }
+    },
+    "FileModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "fileId",
+            "fileModification"
+          ],
+          "properties": {
+            "fileId": {
+              "description": "Идентификатор файла",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "fileModification": {
+              "$ref": "#/definitions/FileModification"
+            }
+          }
+        }
+      ]
+    },
+    "GeneralError": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "IdentityCreationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IdentityModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "partyID",
+            "name",
+            "provider"
+          ],
+          "properties": {
+            "partyID": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "provider": {
+              "description": "Идентификатор провайдера услуг",
+              "type": "string",
+              "example": "serviceprovider"
+            },
+            "metadata": {
+              "description": "Произвольный, специфичный для клиента API и непрозрачный для системы набор данных, ассоциированных с\nданной личностью владельца\n",
+              "type": "object",
+              "example": {
+                "lkDisplayName": "Сергей Иванович"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "IdentityModification": {
+      "type": "object",
+      "discriminator": "identityModificationType",
+      "required": [
+        "identityModificationType"
+      ],
+      "properties": {
+        "identityModificationType": {
+          "type": "string",
+          "enum": [
+            "IdentityCreationModification"
+          ]
+        }
+      }
+    },
+    "IdentityModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Modification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "modification"
+          ],
+          "properties": {
+            "id": {
+              "description": "Идентификатор",
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/IdentityModification"
+            }
+          }
+        }
+      ]
+    },
+    "InternationalBankAccount": {
+      "description": "Междyнародный банковский счёт",
+      "type": "object",
+      "required": [
+        "accountHolder",
+        "iban",
+        "number",
+        "bank"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "accountHolder": {
+              "type": "string"
+            },
+            "iban": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            },
+            "bank": {
+              "$ref": "#/definitions/InternationalBankDetails"
+            },
+            "correspondentAccount": {
+              "$ref": "#/definitions/CorrespondentAccount"
+            }
+          }
+        }
+      ]
+    },
+    "InternationalBankDetails": {
+      "description": "Детальная информация по международному банковскому счёту",
+      "type": "object",
+      "required": [
+        "abaRtn",
+        "address",
+        "bic",
+        "name",
+        "country"
+      ],
+      "properties": {
+        "abaRtn": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "bic": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "InternationalLegalEntity": {
+      "description": "Юридическое лицо-резидент РФ",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/LegalEntityType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "legalName",
+            "actualAddress",
+            "registeredAddress",
+            "registeredNumber",
+            "tradingName"
+          ],
+          "properties": {
+            "legalName": {
+              "description": "Наименование",
+              "type": "string"
+            },
+            "actualAddress": {
+              "description": "Адрес места нахождения",
+              "type": "string"
+            },
+            "registeredAddress": {
+              "description": "Адрес места регистрации",
+              "type": "string"
+            },
+            "registeredNumber": {
+              "description": "Регистрационный номер",
+              "type": "string"
+            },
+            "tradingName": {
+              "description": "Торговое наименование",
+              "type": "string"
+            },
+            "country": {
+              "description": "Страна мерчанта",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "InvalidChangeset": {
+      "description": "Невалидный набор изменений",
+      "type": "object",
+      "required": [
+        "reason",
+        "invalid_changesets"
+      ],
+      "properties": {
+        "reason": {
+          "description": "Причина",
+          "type": "string"
+        },
+        "invalid_changesets": {
+          "description": "Список невалидных наборов изменений",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClaimChangeset"
+          }
+        }
+      }
+    },
+    "LegalAgreement": {
+      "description": "Юридическое соглашение",
+      "type": "object",
+      "properties": {
+        "signedAt": {
+          "type": "string"
+        },
+        "legalAgreementID": {
+          "type": "string"
+        },
+        "validUntil": {
+          "type": "string"
+        }
+      }
+    },
+    "LegalEntity": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorType"
+        },
+        {
+          "type": "object",
+          "discriminator": "legalEntityType",
+          "required": [
+            "legalEntityType"
+          ],
+          "properties": {
+            "legalEntityType": {
+              "$ref": "#/definitions/LegalEntityType"
+            }
+          }
+        }
+      ]
+    },
+    "LegalEntityType": {
+      "type": "object",
+      "discriminator": "legalEntityType",
+      "required": [
+        "legalEntityType"
+      ],
+      "properties": {
+        "legalEntityType": {
+          "type": "string",
+          "enum": [
+            "RussianLegalEntity",
+            "InternationalLegalEntity"
+          ]
+        }
+      }
+    },
+    "Modification": {
+      "description": "Единичное изменение данных участника",
+      "type": "object",
+      "discriminator": "modificationType",
+      "required": [
+        "modificationType"
+      ],
+      "properties": {
+        "modificationType": {
+          "type": "string",
+          "enum": [
+            "PartyModification",
+            "ClaimModification",
+            "IdentityModificationUnit",
+            "WalletModificationUnit"
+          ]
+        }
+      }
+    },
+    "ModificationUnit": {
+      "description": "ModificationUnit",
+      "type": "object",
+      "required": [
+        "modificationID",
+        "createdAt",
+        "userInfo",
+        "modification"
+      ],
+      "properties": {
+        "modificationID": {
+          "description": "Идентификатор изменения",
+          "type": "integer",
+          "format": "int64"
+        },
+        "createdAt": {
+          "description": "Дата и время создания",
+          "type": "string",
+          "format": "date-time"
+        },
+        "userInfo": {
+          "$ref": "#/definitions/UserInfo"
+        },
+        "modification": {
+          "$ref": "#/definitions/Modification"
+        }
+      }
+    },
+    "PartyModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Modification"
+        },
+        {
+          "type": "object",
+          "discriminator": "partyModificationType",
+          "required": [
+            "partyModificationType"
+          ],
+          "properties": {
+            "partyModificationType": {
+              "$ref": "#/definitions/PartyModificationType"
+            }
+          }
+        }
+      ]
+    },
+    "PartyModificationType": {
+      "type": "object",
+      "discriminator": "partyModificationType",
+      "required": [
+        "partyModificationType"
+      ],
+      "properties": {
+        "partyModificationType": {
+          "type": "string",
+          "enum": [
+            "ContractorModificationUnit",
+            "ContractModificationUnit",
+            "ShopModificationUnit",
+            "AdditionalInfoModificationUnit"
+          ]
+        }
+      }
+    },
+    "PaymentInstitutionAccount": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        }
+      ]
+    },
+    "PaymentInstitutionRef": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "PaymentTool": {
+      "type": "object",
+      "discriminator": "paymentToolType",
+      "properties": {
+        "paymentToolType": {
+          "description": "Тип платежного средства",
+          "type": "string",
+          "enum": [
+            "CardData"
+          ]
+        }
+      },
+      "required": [
+        "paymentToolType"
+      ]
+    },
+    "PayoutToolInfo": {
+      "type": "object",
+      "discriminator": "payoutToolType",
+      "required": [
+        "payoutToolType"
+      ],
+      "properties": {
+        "payoutToolType": {
+          "type": "string",
+          "enum": [
+            "RussianBankAccount",
+            "InternationalBankAccount",
+            "WalletInfo",
+            "PaymentInstitutionAccount"
+          ]
+        }
+      }
+    },
+    "PowerOfAttorney": {
+      "description": "Юридическое соглашение",
+      "type": "object",
+      "required": [
+        "signedAt",
+        "legalAgreementID"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/RepresentativeDocument"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "signedAt": {
+              "type": "string"
+            },
+            "legalAgreementID": {
+              "type": "string"
+            },
+            "validUntil": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "PrivateEntity": {
+      "description": "Юридическое лицо-резидент РФ",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "firstName",
+            "middleName",
+            "secondName",
+            "contactInfo"
+          ],
+          "properties": {
+            "firstName": {
+              "description": "Имя",
+              "type": "string"
+            },
+            "middleName": {
+              "description": "Отчество",
+              "type": "string"
+            },
+            "secondName": {
+              "description": "Фамилия",
+              "type": "string"
+            },
+            "contactInfo": {
+              "description": "Информация о контакте",
+              "$ref": "#/definitions/ContactInfo"
+            }
+          }
+        }
+      ]
+    },
+    "Reason": {
+      "type": "string"
+    },
+    "RegisteredUser": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ContractorType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "email"
+          ],
+          "properties": {
+            "email": {
+              "description": "Электронная почта",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ReportPreferences": {
+      "type": "object",
+      "properties": {
+        "serviceAcceptanceActPreferences": {
+          "$ref": "#/definitions/ServiceAcceptanceActPreferences"
+        }
+      }
+    },
+    "Representative": {
+      "type": "object",
+      "required": [
+        "position",
+        "fullName",
+        "document"
+      ],
+      "properties": {
+        "position": {
+          "description": "Наименование должности представителя",
+          "type": "string"
+        },
+        "fullName": {
+          "description": "ФИО представителя",
+          "type": "string"
+        },
+        "document": {
+          "description": "Документ, на основании которого действует представитель",
+          "$ref": "#/definitions/RepresentativeDocument"
+        }
+      }
+    },
+    "RepresentativeDocument": {
+      "type": "object",
+      "discriminator": "documentType",
+      "required": [
+        "documentType"
+      ],
+      "properties": {
+        "documentType": {
+          "type": "string",
+          "enum": [
+            "ArticlesOfAssociation",
+            "PowerOfAttorney"
+          ]
+        }
+      }
+    },
+    "RussianBankAccount": {
+      "description": "Банковский счёт",
+      "type": "object",
+      "required": [
+        "account",
+        "bankName",
+        "bankPostAccount",
+        "bankBik"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "account": {
+              "type": "string"
+            },
+            "bankName": {
+              "type": "string"
+            },
+            "bankPostAccount": {
+              "type": "string"
+            },
+            "bankBik": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "RussianLegalEntity": {
+      "description": "Юридическое лицо-резидент РФ",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/LegalEntityType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "registeredName",
+            "registeredNumber",
+            "inn",
+            "actualAddress",
+            "postAddress",
+            "representativePosition",
+            "representativeFullName",
+            "representativeDocument",
+            "russianBankAccount"
+          ],
+          "properties": {
+            "registeredName": {
+              "description": "Наименование",
+              "type": "string"
+            },
+            "registeredNumber": {
+              "description": "ОГРН",
+              "type": "string"
+            },
+            "inn": {
+              "description": "ИНН/КПП",
+              "type": "string"
+            },
+            "actualAddress": {
+              "description": "Адрес места нахождения",
+              "type": "string"
+            },
+            "postAddress": {
+              "description": "Адрес для отправки корреспонденции (почтовый)",
+              "type": "string"
+            },
+            "representativePosition": {
+              "description": "Наименование должности ЕИО/представителя",
+              "type": "string"
+            },
+            "representativeFullName": {
+              "description": "ФИО ЕИО/представителя",
+              "type": "string"
+            },
+            "representativeDocument": {
+              "description": "Наименование документа, на основании которого действует ЕИО/представитель",
+              "type": "string"
+            },
+            "russianBankAccount": {
+              "description": "Реквизиты юр.лица",
+              "$ref": "#/definitions/RussianBankAccount"
+            }
+          }
+        }
+      ]
+    },
+    "ServiceAcceptanceActPreferences": {
+      "type": "object",
+      "required": [
+        "schedule",
+        "signer"
+      ],
+      "properties": {
+        "schedule": {
+          "$ref": "#/definitions/BusinessScheduleRef"
+        },
+        "signer": {
+          "$ref": "#/definitions/Representative"
+        }
+      }
+    },
+    "ShopAccountCreationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency"
+          ],
+          "properties": {
+            "currency": {
+              "$ref": "#/definitions/CurrencyRef"
+            }
+          }
+        }
+      ]
+    },
+    "ShopCategoryModification": {
+      "description": "Изменение категории магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "category"
+          ],
+          "properties": {
+            "category": {
+              "$ref": "#/definitions/CategoryRef"
+            }
+          }
+        }
+      ]
+    },
+    "ShopContractModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contractID",
+            "payoutToolID"
+          ],
+          "properties": {
+            "contractID": {
+              "type": "string"
+            },
+            "payoutToolID": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ShopCreationModification": {
+      "description": "Параметры магазина",
+      "type": "object",
+      "required": [
+        "category",
+        "location",
+        "details",
+        "contractID",
+        "payoutToolID"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "category": {
+              "$ref": "#/definitions/CategoryRef"
+            },
+            "location": {
+              "$ref": "#/definitions/ShopLocation"
+            },
+            "details": {
+              "$ref": "#/definitions/ShopDetails"
+            },
+            "contractID": {
+              "type": "string"
+            },
+            "payoutToolID": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "ShopDetails": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Название магазина",
+          "type": "string",
+          "maxLength": 100
+        },
+        "description": {
+          "description": "Краткое описание",
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "ShopDetailsModification": {
+      "description": "Изменение деталей магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "details"
+          ],
+          "properties": {
+            "details": {
+              "$ref": "#/definitions/ShopDetails"
+            }
+          }
+        }
+      ]
+    },
+    "ShopLocation": {
+      "description": "Местоположение магазина, по которому можно его найти",
+      "type": "object",
+      "discriminator": "locationType",
+      "required": [
+        "locationType"
+      ],
+      "properties": {
+        "locationType": {
+          "description": "Тип местоположения",
+          "type": "string",
+          "enum": [
+            "ShopLocationUrl"
+          ]
+        }
+      }
+    },
+    "ShopLocationModification": {
+      "description": "Изменение местоположения магазина",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "location"
+          ],
+          "properties": {
+            "location": {
+              "$ref": "#/definitions/ShopLocation"
+            }
+          }
+        }
+      ]
+    },
+    "ShopLocationUrl": {
+      "description": "Местоположение в Интернете",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopLocation"
+        },
+        {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "description": "URL сайта магазина",
+              "type": "string",
+              "format": "uri",
+              "maxLength": 1000
+            }
+          }
+        }
+      ]
+    },
+    "ShopModification": {
+      "type": "object",
+      "discriminator": "shopModificationType",
+      "required": [
+        "shopModificationType"
+      ],
+      "properties": {
+        "shopModificationType": {
+          "type": "string",
+          "enum": [
+            "ShopCreationModification",
+            "ShopCategoryModification",
+            "ShopDetailsModification",
+            "ShopContractModification",
+            "ShopPayoutToolModification",
+            "ShopLocationModification",
+            "ShopAccountCreationModification",
+            "ShopPayoutScheduleModification"
+          ]
+        }
+      }
+    },
+    "ShopModificationUnit": {
+      "type": "object",
+      "required": [
+        "id",
+        "modification"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PartyModificationType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "Идентификатор магазина",
+              "type": "string",
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "modification": {
+              "$ref": "#/definitions/ShopModification"
+            }
+          }
+        }
+      ]
+    },
+    "ShopPayoutScheduleModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schedule": {
+              "$ref": "#/definitions/BusinessScheduleRef"
+            }
+          }
+        }
+      ]
+    },
+    "ShopPayoutToolModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ShopModification"
+        },
+        {
+          "type": "object",
+          "discriminator": "payoutToolModification",
+          "required": [
+            "payoutToolModification"
+          ],
+          "properties": {
+            "payoutToolModification": {
+              "description": "Изменения в платежном инструменте",
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "StatusChanged": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/StatusModification"
+        }
+      ]
+    },
+    "StatusModification": {
+      "description": "Единичное изменение статуса заявки",
+      "type": "object",
+      "discriminator": "statusModificationType",
+      "required": [
+        "statusModificationType"
+      ],
+      "properties": {
+        "statusModificationType": {
+          "type": "string",
+          "enum": [
+            "StatusChanged"
+          ]
+        }
+      }
+    },
+    "StatusModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ClaimModificationType"
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "statusModification"
+          ],
+          "properties": {
+            "status": {
+              "description": "Статус заявки",
+              "type": "string",
+              "enum": [
+                "pending",
+                "review",
+                "pendingAcceptance",
+                "accepted",
+                "denied",
+                "revoked"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            },
+            "statusModification": {
+              "$ref": "#/definitions/StatusModification"
+            }
+          }
+        }
+      ]
+    },
+    "UserInfo": {
+      "description": "Данные пользователя",
+      "type": "object",
+      "required": [
+        "userId",
+        "email",
+        "username",
+        "userType"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "userType": {
+          "type": "string",
+          "enum": [
+            "internal_user",
+            "external_user"
+          ]
+        }
+      }
+    },
+    "WalletCreationModification": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WalletModification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "name",
+            "identityID",
+            "currency"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "identityID": {
+              "type": "string"
+            },
+            "currency": {
+              "$ref": "#/definitions/CurrencyRef"
+            },
+            "metadata": {
+              "description": "Произвольный, специфичный для клиента API и непрозрачный для системы набор данных, ассоциированных с\nданным кошельком\n",
+              "type": "object",
+              "example": {
+                "client_locale": "RU_ru"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "WalletInfo": {
+      "type": "object",
+      "required": [
+        "walletID"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/PayoutToolInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "walletID": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "WalletModification": {
+      "type": "object",
+      "discriminator": "walletModificationType",
+      "required": [
+        "walletModificationType"
+      ],
+      "properties": {
+        "walletModificationType": {
+          "type": "string",
+          "enum": [
+            "WalletCreationModification"
+          ]
+        }
+      }
+    },
+    "WalletModificationUnit": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Modification"
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "modification"
+          ],
+          "properties": {
+            "id": {
+              "description": "Идентификатор",
+              "type": "string"
+            },
+            "modification": {
+              "$ref": "#/definitions/WalletModification"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
